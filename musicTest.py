@@ -27,19 +27,18 @@ MyMIDI.addTempo(track, time, tempo)
 
 
 #Ahora calculamos las notas que puede tener el codigo
-#Nos limitamos a 3 octvas, una abajo y una arriba
 print("Enter base note: ")
 baseNote = int(input())
 
 #OPC
 
-#baseNote = baseNote - 12
+baseNote = baseNote - 12
 currentNote = baseNote
 possibleNotes = [currentNote]
 
-scaleLength = len(majorScale)
+scaleLength = len(majorScale*3)
 for i in range(scaleLength):
-	currentNote = currentNote + majorScale[i]
+	currentNote = currentNote + majorScale[i%len(majorScale)]
 	possibleNotes.append(currentNote)
 	
 
