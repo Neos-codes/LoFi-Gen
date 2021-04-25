@@ -220,6 +220,9 @@ def main():
 		#endfor
 	#endfor
 
+	test = random.choices([0,1], k=50)
+	print(type(test))
+
 	population = geneticIteration(population, mutationRate, notesTest)
 
 
