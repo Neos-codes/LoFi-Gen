@@ -1,0 +1,13 @@
+# Este archivo sirve para ignorar archivos dentro del proyecto
+# Esto sirve para ignorar archivos innecesarios, como por ejemplo los resultados del la generacion
+
+# Como usar:
+# Ej:
+*.mid 
+
+# Ignora los archivos .mid, es decir ya no los va a trackear en el repositorio
+# El * quiere decir "cualquier nombre de archivo"
+
+# Para archivos especificos
+Pipfile
+*.lock
