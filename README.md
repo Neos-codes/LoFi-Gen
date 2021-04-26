@@ -1,6 +1,6 @@
 # LoFi-Gen
 
-## (1) How to install proyect
+## (1) How to install project
 
 > pip install pipenv
 
