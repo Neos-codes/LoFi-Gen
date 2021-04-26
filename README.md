@@ -9,5 +9,3 @@
 ## (2) How to run it
 
 > pipenv run python3 generate.py
-
-> # the output will be generate into **product** folder
