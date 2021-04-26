@@ -58,6 +58,7 @@ def selectionFunction(population: np.array, fitnessArray: np.array):
 	return selectedParents
 
 def getParent(value: int, probArray: np.array):
+	#REVSIAR
 	for i in range(len(probArray)):
 		if (value <= probArray[i]):
 			#print("found at",i, "| value is", value)
@@ -119,6 +120,7 @@ def geneticIteration(population: np.array, mutationRate: float, scale: list, gen
 	#####seleccionamos individuos de poblacion inicial
 	selectedIndividuals = selectionFunction(population, populationFitness)
 
+
 	"""print("Selected parents")
 	for i in range(len(selectedIndividuals)):
 		print(selectedIndividuals[i], " ", end='')
@@ -148,7 +150,6 @@ def geneticIteration(population: np.array, mutationRate: float, scale: list, gen
 	return population
 
 def toMidi(baseNote: int, scale: list, barNumber: int, individual: np.array, generation: int, indId: int):
-	degrees  = [60, 62, 64, 65, 67, 69, 71, 72] # MIDI note number
 	track    = 0
 	channel  = 0
 	time     = 0   # In beats
@@ -194,8 +195,9 @@ def generateInitialPop(scale: list, barNumber: int, startNote: int):
 #endfunction
 
 def main():
-
-
+	#https://github.com/kiecodes/genetic-algorithms/blob/master/algorithms/genetic.py
+	#https://github.com/kiecodes/generate-music/blob/main/algorithms/genetic.py
+	
 	##Las escalas NO repiren su ultima nota
 	##Todas DEBEN sumar 12
 	majorScale = [2, 2, 1, 2, 2, 2, 1]
@@ -205,9 +207,11 @@ def main():
 
 	randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
 
+	#pyo
+	#EventScale
 	notesTest = [47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74]
 
-
+	#reproducir midi dentro del programa
 
 
 
@@ -228,6 +232,7 @@ def main():
 	#generatedNotes = [] 
 	#generatedNotes = generateNotes(majorScale, baseNote)
 	generationNumber = 0
+
 
 	#numBars*4 porque por ahora se tienen 4 notas por compas
 	population = np.zeros((numIndividuals,numBars*4))
@@ -254,7 +259,7 @@ def main():
 			toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
 
 		print("Continue? (1/0)")
-		run = int(input)
+		run = int(input())
 		if (run == 0):
 			break
 
