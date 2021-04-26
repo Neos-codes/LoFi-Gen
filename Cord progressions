@@ -1,0 +1,39 @@
+Cord progression
+	Any combination of cords built from a scale
+
+	Each note has a cord built from them
+
+	C - major		1
+	D - minor		2
+	E - minor		3
+	F - major		4
+	G - major		5
+	A - minor		6
+	B - diminished	7
+
+	1 - 4 - 5
+		Se toma una escala mayor y se toman acordes de 1 - 4 - 5
+
+		C D E F G A B
+
+		1 - C major -> C E G
+		4 - F major -> F A C
+		5 - G major -> G B D  
+
+	1 - 5 - 6 - 4
+		C D E F G A B
+
+		1 - C major -> C E G
+		5 - G major -> G B D
+		6 - A minor -> A C E
+		4 - F major -> F A C
+
+	1 - 6 - 2 - 5
+		C D E F G A B
+
+		1 - C major -> C E G
+		6 - A minor -> A C E
+		2 - D minor -> D F A
+		5 - G major -> G B D
+
+		
