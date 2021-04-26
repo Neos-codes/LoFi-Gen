@@ -102,7 +102,7 @@ def mutationFunction(population: np.array, mutationRate: float, scale: list):
 
 	return
 
-def geneticIteration(population: np.array, mutationRate: float, scale: list):
+def geneticIteration(population: np.array, mutationRate: float, scale: list, generationNumber: int):
 	numInd = int(np.shape(population)[0])
 	numDNA = int(np.shape(population)[1])
 
@@ -147,6 +147,35 @@ def geneticIteration(population: np.array, mutationRate: float, scale: list):
 		print("\n ")
 	return population
 
+def toMidi(baseNote: int, scale: list, barNumber: int, individual: np.array, generation: int, indId: int):
+	degrees  = [60, 62, 64, 65, 67, 69, 71, 72] # MIDI note number
+	track    = 0
+	channel  = 0
+	time     = 0   # In beats
+	duration = 1   # In beats
+	tempo    = 100  # In BPM
+	volume   = 100 # 0-127, as per the MIDI standard	
+
+	indLen = len(individual)
+
+	MyMIDI = MIDIFile(1) 
+	#One track, defaults to format 1 (tempo track automatically created)
+	MyMIDI.addTempo(track, time, tempo)
+
+	"""for i in range (len(individual)):
+		print(individual[i], " ", end='')
+	print("\n")"""
+
+	filename = str(generation) + "-" + str(indId) + ".mid"
+	print(filename)
+	for i in range(indLen):
+		#duration = randDuration[random.randint(0,3)]
+		MyMIDI.addNote(track, channel, int(individual[i]), time, duration, volume)
+		time = time + 1
+		
+	with open(filename, "wb") as output_file:
+		MyMIDI.writeFile(output_file)
+
 def generateInitialPop(scale: list, barNumber: int, startNote: int):
 	#startNote unused por ahora
 	#scale es la escala de notas que usaremos
@@ -165,13 +194,7 @@ def generateInitialPop(scale: list, barNumber: int, startNote: int):
 #endfunction
 
 def main():
-	degrees  = [60, 62, 64, 65, 67, 69, 71, 72] # MIDI note number
-	track    = 0
-	channel  = 0
-	time     = 0   # In beats
-	duration = 1   # In beats
-	tempo    = 100  # In BPM
-	volume   = 100 # 0-127, as per the MIDI standard
+
 
 	##Las escalas NO repiren su ultima nota
 	##Todas DEBEN sumar 12
@@ -184,9 +207,7 @@ def main():
 
 	notesTest = [47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74]
 
-	MyMIDI = MIDIFile(1) 
-	#One track, defaults to format 1 (tempo track automatically created)
-	MyMIDI.addTempo(track, time, tempo)
+
 
 
 
@@ -206,7 +227,7 @@ def main():
 	mutationRate = float(input())
 	#generatedNotes = [] 
 	#generatedNotes = generateNotes(majorScale, baseNote)
-
+	generationNumber = 0
 
 	#numBars*4 porque por ahora se tienen 4 notas por compas
 	population = np.zeros((numIndividuals,numBars*4))
@@ -220,12 +241,22 @@ def main():
 		#endfor
 	#endfor
 
-	test = random.choices([0,1], k=50)
-	print(type(test))
+	for i in range(numIndividuals):
+		toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
 
-	population = geneticIteration(population, mutationRate, notesTest)
+	#test = random.choices([0,1], k=50)
+	#print(test)
 
+	while(1):
+		population = geneticIteration(population, mutationRate, notesTest, generationNumber)
+		generationNumber = generationNumber + 1 
+		for i in range(numIndividuals):
+			toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
 
+		print("Continue? (1/0)")
+		run = int(input)
+		if (run == 0):
+			break
 
 
 
