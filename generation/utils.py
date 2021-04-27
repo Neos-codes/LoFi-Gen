@@ -44,10 +44,9 @@ def play_midi(midi_file):
             clock.tick(30) # check if playback has finished
 
     except KeyboardInterrupt:
-        # if user hits Ctrl/C then exit
-        pygame.mixer.music.fadeout(1000)
+        # if user hits Ctrl/C then stop
         pygame.mixer.music.stop()
-        raise SystemExit from KeyboardInterrupt
+        print('')
 
 
 def toMidi(baseNote: int, scale: list, barNumber: int, individual: np.array, generation: int, indId: int):
