@@ -1,8 +1,8 @@
 """
 """
-from midiutil import MIDIFile
 import random
 import numpy as np
+import utils # local module
 
 def fitnessFunction(fitnessArray: np.array):
 
@@ -17,52 +17,51 @@ def fitnessFunction(fitnessArray: np.array):
     return fitnessArray
 
 def selectionFunction(population: np.array, fitnessArray: np.array):
-    #https://www.youtube.com/watch?v=-B15r-8WX48
+    #https://www.youtube.com/watch?v=-B15r-8WX48 (roulette wheel selection)
     amountInd = len(population)
-    #usamos roulette wheel selection
-    #for i in range(numIndiviuos)
     totalFitness = np.sum(fitnessArray)
     relativeFitness = np.zeros(amountInd)
     for i in range(amountInd):
         relativeFitness[i] = fitnessArray[i] / totalFitness
-        #print(relativeFitness[i])
 
     cumulativeProbabilityArray = np.zeros(amountInd)
-    currentSum = 0;
+    currentSum = 0
     for i in range(amountInd):
         cumulativeProbabilityArray[i] = relativeFitness[i] + currentSum
         currentSum = cumulativeProbabilityArray[i]
 
-    """print("Cumulative probability vector")
-    for i in range(amountInd):
-        print(cumulativeProbabilityArray[i], " ", end='')
-    print("\n")"""
+    # print("Cumulative probability vector")
+    # for i in range(amountInd):
+    #     print(cumulativeProbabilityArray[i], " ", end='')
+    # print("\n")
 
     #ahora que tenemos la probabilidad cumulativa
-    #debemos retornar el vector que indica los pares que 
+    #debemos retornar el vector que indica los pares que
     #debemos cruzar entre si para obtener los hijos
-    #-------
+
+    def getParent(value: int, probArray: np.array):
+    # REVISAR !!!
+    # La defini aqui, porque solo se usa en esta misma funcion
+        for i in range(len(probArray)):
+            if (value <= probArray[i]):
+                #print("found at",i, "| value is", value)
+                return i
+
     #SELECCION
-    #iremos tomando valores random entre 0-1 
+    #iremos tomando valores random entre 0-1
     #para ir tomando pares segun la prob anterior
     #por ahora, se entregara un arreglo con tamano
     #2*numeroIndividuos
+
     selectedParents = np.zeros(amountInd*2)
     for i in range(amountInd*2):
         #generamos valor random entre 0-1
-        value = random.uniform(0,1) 
+        value = random.uniform(0,1)
         parent = getParent(value, cumulativeProbabilityArray)
         #print("parent is", parent)
         selectedParents[i] = parent
 
     return selectedParents
-
-def getParent(value: int, probArray: np.array):
-    #REVSIAR
-    for i in range(len(probArray)):
-        if (value <= probArray[i]):
-            #print("found at",i, "| value is", value)
-            return i
 
 def crossoverFunction(parents: np.array, population: np.array):
     #print("Crossover function")
@@ -149,34 +148,6 @@ def geneticIteration(population: np.array, mutationRate: float, scale: list, gen
         print("\n ")
     return population
 
-def toMidi(baseNote: int, scale: list, barNumber: int, individual: np.array, generation: int, indId: int):
-    track    = 0
-    channel  = 0
-    time     = 0   # In beats
-    duration = 1   # In beats
-    tempo    = 100  # In BPM
-    volume   = 100 # 0-127, as per the MIDI standard    
-
-    indLen = len(individual)
-
-    MyMIDI = MIDIFile(1) 
-    #One track, defaults to format 1 (tempo track automatically created)
-    MyMIDI.addTempo(track, time, tempo)
-
-    """for i in range (len(individual)):
-        print(individual[i], " ", end='')
-    print("\n")"""
-
-    filename = str(generation) + "-" + str(indId) + ".mid"
-    print(filename)
-    for i in range(indLen):
-        #duration = randDuration[random.randint(0,3)]
-        MyMIDI.addNote(track, channel, int(individual[i]), time, duration, volume)
-        time = time + 1
-
-    with open("product/" + filename, "wb") as output_file:
-        MyMIDI.writeFile(output_file)
-
 def generateInitialPop(scale: list, barNumber: int, startNote: int):
     #startNote unused por ahora
     #scale es la escala de notas que usaremos
@@ -247,7 +218,7 @@ def main():
     #endfor
 
     for i in range(numIndividuals):
-        toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
+        utils.toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
 
     #test = random.choices([0,1], k=50)
     #print(test)
@@ -256,7 +227,7 @@ def main():
         population = geneticIteration(population, mutationRate, notesTest, generationNumber)
         generationNumber = generationNumber + 1 
         for i in range(numIndividuals):
-            toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
+            utils.toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
 
         print("Continue? (1/0)")
         run = int(input())
