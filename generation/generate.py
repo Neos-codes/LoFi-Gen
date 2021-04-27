@@ -3,13 +3,14 @@
 import random
 import numpy as np
 import utils # local module
+from note import Note # local module
 
 def fitnessFunction(fitnessArray: np.array, generationNumber):
 
     amountInd = len(fitnessArray)
     for i in range(amountInd):
         file_name = f"{generationNumber}-{i}.mid"
-        utils.play_midi(file_name)
+        utils.play_midi("/product" + file_name)
 
         print("Rating for", i ,"(1-10): ", end='')
         fitnessArray[i] = (input())
@@ -19,13 +20,16 @@ def fitnessFunction(fitnessArray: np.array, generationNumber):
         print(fitnessArray[i])"""
     return fitnessArray
 
-def selectionFunction(population: np.array, fitnessArray: np.array):
-    #https://www.youtube.com/watch?v=-B15r-8WX48 (roulette wheel selection)
-    amountInd = len(population)
-    totalFitness = np.sum(fitnessArray)
+def selectionFunction(amountInd: int, populationFitness: np.array):
+    ''' selects individuals to generate the next population,
+        this is done using propabilities and roulette wheel selection
+        # https://www.youtube.com/watch?v=-B15r-8WX48 (roulette wheel selection)
+                                                                                '''
+
+    totalFitness = np.sum(populationFitness)
     relativeFitness = np.zeros(amountInd)
     for i in range(amountInd):
-        relativeFitness[i] = fitnessArray[i] / totalFitness
+        relativeFitness[i] = populationFitness[i] / totalFitness
 
     cumulativeProbabilityArray = np.zeros(amountInd)
     currentSum = 0
@@ -105,17 +109,19 @@ def mutationFunction(population: np.array, mutationRate: float, scale: list):
 
     return
 
-def geneticIteration(population: np.array, mutationRate: float, scale: list, generationNumber: int):
-    numInd = int(np.shape(population)[0])
-    numDNA = int(np.shape(population)[1])
+def geneticIteration(population: list, mutationRate: float, scale: list, generationNumber: int):
+    ''' generates a new population '''
 
-    for i in range(numInd):
-        print("Individual", i)
-        for j in range(4*4):
-            print(population[i][j], " ", end='')
-        print("\n ")
+    numInd = len(population)
+    # numDNA = int(np.shape(population)[1])
 
-    #####rateamos la poblcaion
+    i = 1
+    for ind in population:
+        print(f"Individual #{i}: {ind}")
+        print('')
+        i = i + 1
+
+    #####rateamos la poblacion
     individualRating = np.zeros(numInd)
     populationFitness = fitnessFunction(individualRating, generationNumber)
 
@@ -131,6 +137,7 @@ def geneticIteration(population: np.array, mutationRate: float, scale: list, gen
 
     #####Realizamos el crossover
     population = crossoverFunction(selectedIndividuals, population)
+
     """print("Printing possible notes")
     for i in range(len(generatedNotes)):
         print(generatedNotes[i])"""
@@ -151,27 +158,26 @@ def geneticIteration(population: np.array, mutationRate: float, scale: list, gen
         print("\n ")
     return population
 
-def generateInitialPop(scale: list, barNumber: int, startNote: int):
+def generateInitialPop(scale: list, bar_number: int, start_note: int):
+    ''' generates the intial population '''
+
     #startNote unused por ahora
     #scale es la escala de notas que usaremos
     #barNumber es la cantidad de compases
-    initialPop = []
 
+    initial_pop = []
 
-    scaleLength = len(scale)
+    # inicialmente cada compas tiene 4 notas
+    for _ in range(bar_number * 4):
+        #agregamos a la poblacion inicial notas al azar de la escala
+        initial_pop.append(Note(random.choice(scale), 1))
 
-    #por ahora cada compas tiene 4 notas
-    for i in range(barNumber*4):
-        #agregamos a la posblacion inicial notas al azar de la escala
-        initialPop.append((scale[random.randint(0,scaleLength-1)]))
-        #print("Nota", i, "=", initialPop[i])
-    return initialPop
-#endfunction
+    return initial_pop
 
 def main():
     #https://github.com/kiecodes/genetic-algorithms/blob/master/algorithms/genetic.py
     #https://github.com/kiecodes/generate-music/blob/main/algorithms/genetic.py
-    
+
     ##Las escalas NO repiren su ultima nota
     ##Todas DEBEN sumar 12
     majorScale = [2, 2, 1, 2, 2, 2, 1]
@@ -184,10 +190,6 @@ def main():
     #pyo
     #EventScale
     notesTest = [47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74]
-
-    #reproducir midi dentro del programa
-
-
 
     #Ahora calculamos las notas que puede tener el codigo
     print("Enter base note: ")
@@ -203,75 +205,40 @@ def main():
     numBars = int(input())
     print("Enter mutation rate amount (0-1): ")
     mutationRate = float(input())
-    #generatedNotes = [] 
+    #generatedNotes = []
     #generatedNotes = generateNotes(majorScale, baseNote)
+
     generationNumber = 0
 
+    # esto sera una lista de listas
+    population = []
 
-    #numBars*4 porque por ahora se tienen 4 notas por compas
-    population = np.zeros((numIndividuals,numBars*4))
-    #print(type(population))
-
-    #Generamos la poblacion inicial
+    # Generamos la poblacion inicial
     for i in range(numIndividuals):
-        auxList = generateInitialPop(notesTest, numBars, 0)
-        for j in range(numBars*4):
-            population[i][j] = auxList[j]
-        #endfor
-    #endfor
+        auxlist = generateInitialPop(notesTest, numBars, 0)
+        population.append(auxlist)
 
     for i in range(numIndividuals):
         utils.toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
 
-    #test = random.choices([0,1], k=50)
-    #print(test)
+    # while 1:
+    #     population = geneticIteration(population, mutationRate, notesTest, generationNumber)
+    #     generationNumber = generationNumber + 1
 
-    while(1):
-        population = geneticIteration(population, mutationRate, notesTest, generationNumber)
-        generationNumber = generationNumber + 1 
-        for i in range(numIndividuals):
-            utils.toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
+    #     for i in range(numIndividuals):
+    #         utils.toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
 
-        print("Continue? (1/0)")
-        run = int(input())
-        if (run == 0):
-            break
-
-
-
-    """
-    while(time < 32):
-        pitch = degrees[random.randint(0,7)]
-        #duration = 1
-        duration = randDuration[random.randint(0,4)]
-        
-        MyMIDI.addNote(track, channel, pitch, time, duration, volume)
-        print ("pitch: ", pitch, " | ", "time: ", time)
-        time = time + duration
-
-
-    with open("output.mid", "wb") as output_file:
-        MyMIDI.writeFile(output_file)
-    """
-    """
-    gnLength = len(generatedNotes)
-    for i in range(gnLength):
-        #cambiar rango a las notas de la scala
-        noteInScale = degrees[random.randint(0,7)]
-        duration = 1
-        #duration = randDuration[random.randint(0,3)]
-        MyMIDI.addNote(track, channel, baseNote + noteInScale, time, duration, volume)
-        print ("pitch: ", noteInScale + baseNote)
-        print ("time: ", time)
-        time = time + 1
-
-    with open("output.mid", "wb") as output_file:
-        MyMIDI.writeFile(output_file)
-    """
-    
+    #     print("Continue? (1/0)")
+    #     run = int(input())
+    #     if run == 0:
+    #         break
 
 if __name__ == "__main__":
     main()
+
+
+
+
 
 """
 if (pauses):
@@ -280,36 +247,33 @@ if (pauses):
                 time = time + duration
                 continue"""
 
+########## DEPRECATED CODE BELOW
+
+# def generateNotes(scale: list, startNote: int):
+#     #*scale = lista de la escala
+#     #startNote = nota startNote de donde empezamos
+#     #DESC: Genera las notas posibles que podra usar
+#     #el algoritmo
+#     print("generating notes...")
+#     offset = 8 - len(scale)
+#     print("offset:", offset)
+
+#     startNote = startNote - 12
+#     currentNote = startNote
+#     listNotes = [currentNote]
+
+#     scaleLength = len(scale*2)
+#     for i in range(scaleLength):
+#         currentNote = currentNote + scale[i%len(scale)]
+#         listNotes.append(currentNote)
+#     print(scaleLength, "notes were generated")
+
+#     if (scaleLength < 16):
+#         print("need", 16 - scaleLength,"more")
+#     else:
+#         print("need", 16 - scaleLength,"less")
 
 
 
-##########DEPRECATED CODE BELOW
-
-def generateNotes(scale: list, startNote: int):
-    #*scale = lista de la escala
-    #startNote = nota startNote de donde empezamos
-    #DESC: Genera las notas posibles que podra usar
-    #el algoritmo
-    print("generating notes...")
-    offset = 8 - len(scale)
-    print("offset:", offset)
-
-    startNote = startNote - 12
-    currentNote = startNote
-    listNotes = [currentNote]
-
-    scaleLength = len(scale*2)
-    for i in range(scaleLength):
-        currentNote = currentNote + scale[i%len(scale)]
-        listNotes.append(currentNote)
-    print(scaleLength, "notes were generated")
-
-    if (scaleLength < 16):
-        print("need", 16 - scaleLength,"more")
-    else:
-        print("need", 16 - scaleLength,"less")
-
-
-
-    return listNotes
-#generateNotesEnd
+#     return listNotes
+# #generateNotesEnd
