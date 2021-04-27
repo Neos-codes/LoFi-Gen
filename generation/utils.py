@@ -12,6 +12,8 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 
 import pygame
 
+PRODUCT_DIR = "product/"
+
 def play_midi(midi_file):
     ''' plays a midi file '''
 
@@ -33,9 +35,9 @@ def play_midi(midi_file):
     # play midi
     try:
         clock = pygame.time.Clock()
-        pygame.mixer.music.load(midi_file)
+        pygame.mixer.music.load(PRODUCT_DIR + midi_file)
 
-        print("MIXER: playing %s ", midi_file)
+        print(f"MIXER: playing {midi_file}")
         pygame.mixer.music.play()
 
         while pygame.mixer.music.get_busy():
@@ -73,5 +75,5 @@ def toMidi(baseNote: int, scale: list, barNumber: int, individual: np.array, gen
         MyMIDI.addNote(track, channel, int(individual[i]), time, duration, volume)
         time = time + 1
 
-    with open("product/" + filename, "wb") as output_file:
+    with open(PRODUCT_DIR + filename, "wb") as output_file:
         MyMIDI.writeFile(output_file)

@@ -8,6 +8,6 @@
 
 ## (2) How to run it
 
-> pipenv run python3 generate.py
+> cd generation
 
-> # the output will be generate into **product** folder
+> pipenv run python3 generate.py

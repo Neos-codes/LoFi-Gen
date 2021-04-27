@@ -4,10 +4,13 @@ import random
 import numpy as np
 import utils # local module
 
-def fitnessFunction(fitnessArray: np.array):
+def fitnessFunction(fitnessArray: np.array, generationNumber):
 
     amountInd = len(fitnessArray)
     for i in range(amountInd):
+        file_name = f"{generationNumber}-{i}.mid"
+        utils.play_midi(file_name)
+
         print("Rating for", i ,"(1-10): ", end='')
         fitnessArray[i] = (input())
 
@@ -114,7 +117,7 @@ def geneticIteration(population: np.array, mutationRate: float, scale: list, gen
 
     #####rateamos la poblcaion
     individualRating = np.zeros(numInd)
-    populationFitness = fitnessFunction(individualRating)
+    populationFitness = fitnessFunction(individualRating, generationNumber)
 
     #####seleccionamos individuos de poblacion inicial
     selectedIndividuals = selectionFunction(population, populationFitness)
