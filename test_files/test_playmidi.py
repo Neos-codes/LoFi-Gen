@@ -6,6 +6,6 @@ sys.path.append(os.path.abspath('../generation'))
 import utils
 
 product_dir = '../generation/product/'
-file_name = '0-0.mid'
+file_name = '0-1.mid'
 
 utils.play_midi(product_dir + file_name)

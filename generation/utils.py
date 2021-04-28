@@ -49,7 +49,7 @@ def play_midi(midi_file):
         print('')
 
 
-def toMidi(baseNote: int, scale: list, barNumber: int, individual: list, generation: int, indId: int):
+def toMidi(individual: list, generation: int, indId: int):
     ''' Generates a midi file '''
 
     track    = 0
@@ -66,9 +66,14 @@ def toMidi(baseNote: int, scale: list, barNumber: int, individual: list, generat
 
     filename = str(generation) + "-" + str(indId) + ".mid"
 
-    for note in individual:
-        MyMIDI.addNote(track, channel, note.tone, time, note.duration, volume)
-        time = time + 1
+    for bar in individual:
+        print(f"Notas en este bar: {len(bar.notes)}")
+        for note in bar.notes:
+            print(note.tone)
+            print(note.duration)
+
+            MyMIDI.addNote(track, channel, note.tone, time, note.duration, volume)
+            time = time + 1
 
     with open(PRODUCT_DIR + filename, "wb") as output_file:
         MyMIDI.writeFile(output_file)

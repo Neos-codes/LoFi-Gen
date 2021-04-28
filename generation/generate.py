@@ -3,7 +3,7 @@
 import random
 import numpy as np
 import utils # local module
-from note import Note # local module
+from music_elements import Note, Bar # local module
 
 def fitnessFunction(fitnessArray: np.array, generationNumber):
 
@@ -158,21 +158,25 @@ def geneticIteration(population: list, mutationRate: float, scale: list, generat
         print("\n ")
     return population
 
-def generateInitialPop(scale: list, bar_number: int, start_note: int):
+def generateInitialPop(scale: list, num_bars: int, num_ind: int):
     ''' generates the intial population '''
 
     #startNote unused por ahora
     #scale es la escala de notas que usaremos
     #barNumber es la cantidad de compases
+    # num_ind es la cantidad de individuos
 
-    initial_pop = []
+    population = []
+    for _ in range(num_ind):
+        bars = []
 
-    # inicialmente cada compas tiene 4 notas
-    for _ in range(bar_number * 4):
-        #agregamos a la poblacion inicial notas al azar de la escala
-        initial_pop.append(Note(random.choice(scale), 1))
+        for _ in range(num_bars):
+            foo = Bar.from_scale(scale, 4, 4)
+            bars.append(foo)
 
-    return initial_pop
+        population.append(bars)
+
+    return population
 
 def main():
     #https://github.com/kiecodes/genetic-algorithms/blob/master/algorithms/genetic.py
@@ -194,32 +198,31 @@ def main():
     #Ahora calculamos las notas que puede tener el codigo
     print("Enter base note: ")
     baseNote = int(input())
+
     #print("Pauses? (1/0)")
     #pauses = int(input())
 
-    #numero de individuos que usaremos
-    #inicializamos individualRating con el mismo tamano para ratear despues
     print("Enter tracks amount: ")
     numIndividuals = int(input())
+
     print("Enter bar amount: ")
     numBars = int(input())
+
     print("Enter mutation rate amount (0-1): ")
     mutationRate = float(input())
-    #generatedNotes = []
-    #generatedNotes = generateNotes(majorScale, baseNote)
 
     generationNumber = 0
 
-    # esto sera una lista de listas
-    population = []
+    ### === Generamos la poblacion inicial === ###
 
-    # Generamos la poblacion inicial
-    for i in range(numIndividuals):
-        auxlist = generateInitialPop(notesTest, numBars, 0)
-        population.append(auxlist)
+    # esto sera una lista de listas de Bars
+    population = generateInitialPop(notesTest, numBars, numIndividuals)
 
-    for i in range(numIndividuals):
-        utils.toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
+    # creamos los archivos midi
+    i = 1
+    for ind in population:
+        utils.toMidi(ind, generationNumber, i)
+        i += 1
 
     # while 1:
     #     population = geneticIteration(population, mutationRate, notesTest, generationNumber)
