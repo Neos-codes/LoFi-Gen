@@ -67,13 +67,14 @@ def toMidi(individual: list, generation: int, indId: int):
     filename = str(generation) + "-" + str(indId) + ".mid"
 
     for bar in individual:
-        print(f"Notas en este bar: {len(bar.notes)}")
+        # print(f"Notas en este bar: {len(bar.notes)}")
+
         for note in bar.notes:
-            print(note.tone)
-            print(note.duration)
+            # print(note.tone)
+            # print(note.duration)
 
             MyMIDI.addNote(track, channel, note.tone, time, note.duration, volume)
-            time = time + 1
+            time = time + note.duration # This implies notes will be played 1 by 1
 
     with open(PRODUCT_DIR + filename, "wb") as output_file:
         MyMIDI.writeFile(output_file)

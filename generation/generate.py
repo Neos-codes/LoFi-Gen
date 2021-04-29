@@ -5,19 +5,18 @@ import numpy as np
 import utils # local module
 from music_elements import Note, Bar # local module
 
-def fitnessFunction(fitnessArray: np.array, generationNumber):
+def fitnessFunction(fitnessArray: np.array, generation_number):
 
     amountInd = len(fitnessArray)
+
+    i = 1
     for i in range(amountInd):
-        file_name = f"{generationNumber}-{i}.mid"
-        utils.play_midi("/product" + file_name)
+        file_name = f"{generation_number}-{i}.mid"
+        utils.play_midi("product/" + file_name)
 
         print("Rating for", i ,"(1-10): ", end='')
         fitnessArray[i] = (input())
 
-    #mostramos los individuos
-    """for i in range(amountInd):
-        print(fitnessArray[i])"""
     return fitnessArray
 
 def selectionFunction(amountInd: int, populationFitness: np.array):
@@ -60,41 +59,52 @@ def selectionFunction(amountInd: int, populationFitness: np.array):
     #por ahora, se entregara un arreglo con tamano
     #2*numeroIndividuos
 
-    selectedParents = np.zeros(amountInd*2)
+    selectedParents = []
     for i in range(amountInd*2):
         #generamos valor random entre 0-1
         value = random.uniform(0,1)
         parent = getParent(value, cumulativeProbabilityArray)
         #print("parent is", parent)
-        selectedParents[i] = parent
+        selectedParents.append(int(parent))
 
     return selectedParents
 
-def crossoverFunction(parents: np.array, population: np.array):
-    #print("Crossover function")
-    #print(np.shape(population))
-    numInd = int(np.shape(population)[0])
-    numDNA = int(np.shape(population)[1])
+def crossoverFunction(selected_index: list, population: list):
+    ''' cross the selected individuals '''
 
-    newPopulation = np.zeros((numInd, numDNA))
-    for i in range(numInd):
-        splitPoint = random.randint(0,numDNA)
-        #print("split point", splitPoint)
-        for j in range(numDNA):
-            if (j < splitPoint):
-                index = int(parents[i*2])
-                #print(index)
-                #print(type(index))
-                newPopulation[i][j] = population[index][j]
+    num_ind = len(population)
+    num_bars = len(population[0])
+
+    new_population = []
+
+    # por cada nuevo individuo
+    for i in range(num_ind):
+
+        # obtenemos los padres
+        parent1 = population[selected_index[i*2]]
+        parent2 = population[selected_index[i*2 + 1]]
+
+        # generamos un splitpoint
+        split_point = random.randint(0, num_bars)
+        print(f"split_point: {split_point}")
+
+        # creamos al nuevo ind
+        new_ind = []
+        for j in range(num_bars):
+
+            if j < split_point:
+                new_ind.append(parent1[j])
             else:
-                index = int(parents[i*2+1])
-                #print(index)
-                #print(type(index))
-                newPopulation[i][j] = population[index][j]
-    #print(numInd)
+                new_ind.append(parent2[j])
 
+        # chequeamos la integridad del individuo
+        for bar in new_ind:
+            bar.renew_integrity()
 
-    return newPopulation
+        # lo agregamos a la nueva population
+        new_population.append(new_ind)
+
+    return new_population
 
 def mutationFunction(population: np.array, mutationRate: float, scale: list):
     numInd = int(np.shape(population)[0])
@@ -108,55 +118,6 @@ def mutationFunction(population: np.array, mutationRate: float, scale: list):
                 population[i][j] = scale[random.randint(0,scaleLength-1)]
 
     return
-
-def geneticIteration(population: list, mutationRate: float, scale: list, generationNumber: int):
-    ''' generates a new population '''
-
-    numInd = len(population)
-    # numDNA = int(np.shape(population)[1])
-
-    i = 1
-    for ind in population:
-        print(f"Individual #{i}: {ind}")
-        print('')
-        i = i + 1
-
-    #####rateamos la poblacion
-    individualRating = np.zeros(numInd)
-    populationFitness = fitnessFunction(individualRating, generationNumber)
-
-    #####seleccionamos individuos de poblacion inicial
-    selectedIndividuals = selectionFunction(population, populationFitness)
-
-
-    """print("Selected parents")
-    for i in range(len(selectedIndividuals)):
-        print(selectedIndividuals[i], " ", end='')
-    print("\n")
-    """
-
-    #####Realizamos el crossover
-    population = crossoverFunction(selectedIndividuals, population)
-
-    """print("Printing possible notes")
-    for i in range(len(generatedNotes)):
-        print(generatedNotes[i])"""
-
-    """for i in range(numIndividuals):
-        print("Individual", i)
-        for j in range(4*4):
-            print(population[i][j], " ", end='')
-        print("\n")"""
-
-    mutationFunction(population, mutationRate, scale)
-
-    print("Mutated population")
-    for i in range(numInd):
-        print("Individual", i)
-        for j in range(4*4):
-            print(population[i][j], " ", end='')
-        print("\n ")
-    return population
 
 def generateInitialPop(scale: list, num_bars: int, num_ind: int):
     ''' generates the intial population '''
@@ -193,62 +154,84 @@ def main():
 
     #pyo
     #EventScale
-    notesTest = [47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74]
+    scale = [47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74]
+
+
+    ### === INPUT === ###
 
     #Ahora calculamos las notas que puede tener el codigo
-    print("Enter base note: ")
-    baseNote = int(input())
+    # print("Enter base note: ")
+    # baseNote = int(input())
 
     #print("Pauses? (1/0)")
     #pauses = int(input())
 
-    print("Enter tracks amount: ")
-    numIndividuals = int(input())
+    # print("Enter tracks amount: ")
+    # numIndividuals = int(input())
+    numInd = 4
 
-    print("Enter bar amount: ")
-    numBars = int(input())
+    # print("Enter bar amount: ")
+    # numBars = int(input())
+    numBars = 4
 
-    print("Enter mutation rate amount (0-1): ")
-    mutationRate = float(input())
+    # print("Enter mutation rate amount (0-1): ")
+    # mutationRate = float(input())
+    mutationRate = 0.2
 
-    generationNumber = 0
+    ### === INITIAL POPULATION === ###
 
-    ### === Generamos la poblacion inicial === ###
+    generation_number = 0
 
     # esto sera una lista de listas de Bars
-    population = generateInitialPop(notesTest, numBars, numIndividuals)
+    population = generateInitialPop(scale, numBars, numInd)
 
     # creamos los archivos midi
-    i = 1
-    for ind in population:
-        utils.toMidi(ind, generationNumber, i)
-        i += 1
-
-    # while 1:
-    #     population = geneticIteration(population, mutationRate, notesTest, generationNumber)
-    #     generationNumber = generationNumber + 1
-
-    #     for i in range(numIndividuals):
-    #         utils.toMidi(baseNote, notesTest, numBars, population[i], generationNumber, i)
-
-    #     print("Continue? (1/0)")
-    #     run = int(input())
-    #     if run == 0:
-    #         break
-
-if __name__ == "__main__":
-    main()
+    for i in range(numInd):
+        utils.toMidi(population[i], generation_number, i + 1)
 
 
+    ### === GENETIC ITERATIONS === ###
+    run = 1
+    while run:
+
+        # Show inds
+        i = 1
+        for ind in population:
+            print(f"Individual #{i}: {ind}")
+            print('')
+            i = i + 1
+
+        ##### rateamos la poblacion
+        individual_rating = np.zeros(numInd)
+        population_fitness = fitnessFunction(individual_rating, generation_number)
+
+        ##### seleccionamos individuos de poblacion inicial
+        selected_individuals = selectionFunction(numInd, population_fitness)
+
+        #### Realizamos el crossover
+        population = crossoverFunction(selected_individuals, population)
+
+        # # ideal hacer que esta funcion retorne
+        # mutationFunction(population, mutationRate, scale)
+
+        generation_number = generation_number + 1
+
+        # creamos los archivos midi
+        for i in range(numInd):
+            utils.toMidi(population[i], generation_number, i + 1)
+
+        print("Continue? (1/0)")
+        run = int(input())
+
+main()
 
 
-
-"""
-if (pauses):
-            if (90 < random.randint(1,100)):
-                print ("pause for ", time)
-                time = time + duration
-                continue"""
+# """
+# if (pauses):
+#             if (90 < random.randint(1,100)):
+#                 print ("pause for ", time)
+#                 time = time + duration
+#                 continue"""
 
 ########## DEPRECATED CODE BELOW
 
@@ -280,3 +263,53 @@ if (pauses):
 
 #     return listNotes
 # #generateNotesEnd
+
+
+# def geneticIteration(population: list, mutationRate: float, scale: list, generation_number: int):
+#     ''' generates a new population '''
+
+#     numInd = len(population)
+#     # numDNA = int(np.shape(population)[1])
+
+#     i = 1
+#     for ind in population:
+#         print(f"Individual #{i}: {ind}")
+#         print('')
+#         i = i + 1
+
+#     #####rateamos la poblacion
+#     individualRating = np.zeros(numInd)
+#     populationFitness = fitnessFunction(individualRating, generation_number)
+
+#     #####seleccionamos individuos de poblacion inicial
+#     selectedIndividuals = selectionFunction(population, populationFitness)
+
+
+#     """print("Selected parents")
+#     for i in range(len(selectedIndividuals)):
+#         print(selectedIndividuals[i], " ", end='')
+#     print("\n")
+#     """
+
+#     #####Realizamos el crossover
+#     population = crossoverFunction(selectedIndividuals, population)
+
+#     """print("Printing possible notes")
+#     for i in range(len(generatedNotes)):
+#         print(generatedNotes[i])"""
+
+#     """for i in range(numIndividuals):
+#         print("Individual", i)
+#         for j in range(4*4):
+#             print(population[i][j], " ", end='')
+#         print("\n")"""
+
+#     mutationFunction(population, mutationRate, scale)
+
+#     print("Mutated population")
+#     for i in range(numInd):
+#         print("Individual", i)
+#         for j in range(4*4):
+#             print(population[i][j], " ", end='')
+#         print("\n ")
+    # return population
