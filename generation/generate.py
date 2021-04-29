@@ -3,18 +3,18 @@
 import random
 import numpy as np
 import utils # local module
-from music_elements import Note, Bar # local module
+from music_elements import Note, Bar, NOTE_DURATIONS # local module
 
 def fitnessFunction(fitnessArray: np.array, generation_number):
-
+    ''' rates the quality of the individuals '''
+    
     amountInd = len(fitnessArray)
 
-    i = 1
     for i in range(amountInd):
-        file_name = f"{generation_number}-{i}.mid"
+        file_name = f"{generation_number}-{i+1}.mid"
         utils.play_midi("product/" + file_name)
 
-        print("Rating for", i ,"(1-10): ", end='')
+        print("Rating for", i+1 ,"(1-10): ", end='')
         fitnessArray[i] = (input())
 
     return fitnessArray
@@ -79,45 +79,43 @@ def crossoverFunction(selected_index: list, population: list):
 
     # por cada nuevo individuo
     for i in range(num_ind):
-
         # obtenemos los padres
         parent1 = population[selected_index[i*2]]
         parent2 = population[selected_index[i*2 + 1]]
 
         # generamos un splitpoint
         split_point = random.randint(0, num_bars)
-        print(f"split_point: {split_point}")
 
         # creamos al nuevo ind
         new_ind = []
         for j in range(num_bars):
-
             if j < split_point:
                 new_ind.append(parent1[j])
             else:
                 new_ind.append(parent2[j])
-
-        # chequeamos la integridad del individuo
-        for bar in new_ind:
-            bar.renew_integrity()
 
         # lo agregamos a la nueva population
         new_population.append(new_ind)
 
     return new_population
 
-def mutationFunction(population: np.array, mutationRate: float, scale: list):
-    numInd = int(np.shape(population)[0])
-    numDNA = int(np.shape(population)[1])
+def mutationFunction(population: list, mutationRate: float, scale: list):
+    ''' mutates notes from individuals '''
 
-    scaleLength = len(scale)
-    for i in range(numInd):
-        for j in range(numDNA):
-            value = random.uniform(0,1)
-            if (value < mutationRate):
-                population[i][j] = scale[random.randint(0,scaleLength-1)]
+    num_ind = len(population)
 
-    return
+    for ind in population:
+        for bar in ind:
+            for note in bar.notes:
+                value = random.uniform(0,1)
+
+                if value < mutationRate:
+                    new_tone = random.choice(scale)
+                    new_duration = random.choice(NOTE_DURATIONS)
+
+            bar.renew_integrity()                    
+
+    return population
 
 def generateInitialPop(scale: list, num_bars: int, num_ind: int):
     ''' generates the intial population '''
@@ -193,13 +191,17 @@ def main():
     ### === GENETIC ITERATIONS === ###
     run = 1
     while run:
-
-        # Show inds
+        # show inds
         i = 1
         for ind in population:
-            print(f"Individual #{i}: {ind}")
+            ind_str = ''
+
+            for bar in ind:
+                ind_str = f"{ind_str} {bar}"
+
+            print(f"Individual #{i}: {ind_str}")
             print('')
-            i = i + 1
+            i += 1
 
         ##### rateamos la poblacion
         individual_rating = np.zeros(numInd)
@@ -211,8 +213,8 @@ def main():
         #### Realizamos el crossover
         population = crossoverFunction(selected_individuals, population)
 
-        # # ideal hacer que esta funcion retorne
-        # mutationFunction(population, mutationRate, scale)
+        #### Realizamos la mutacion
+        population = mutationFunction(population, mutationRate, scale)
 
         generation_number = generation_number + 1
 

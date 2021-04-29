@@ -1,7 +1,10 @@
 import random
 
+# standar durations of notes
+NOTE_DURATIONS = [0.25, 0.5, 1, 2]
+
 # The shortest note's duration
-MINIMAL_DURATION = 0.3
+MINIMAL_DURATION = 0.25
 
 class Note():
     ''' Note in MIDI '''
@@ -35,15 +38,21 @@ class Bar():
         ''' creates random notes from the scale '''
 
         notes = []
-        notes_total_duration = 0
+        remaining_time = duration
 
-        while notes_total_duration < duration:
-            # creates random notes
+        while remaining_time > MINIMAL_DURATION:
+            # select a random tone from scale
             note_tone = random.choice(scale)
-            note_duration = random.uniform(MINIMAL_DURATION, (duration - notes_total_duration))
+
+            # select a random duration less or equal to remaining_time
+            while True:
+                note_duration = random.choice(NOTE_DURATIONS)
+                if note_duration <= remaining_time:
+                    break
+
             notes.append(Note(note_tone, note_duration))
 
-            notes_total_duration += note_duration
+            remaining_time -= note_duration
 
             # Note: this implementation may allow more than one note to be played at the same time
             # Note2: Due to the way we are creating the midi file, the notes are played one by one
@@ -66,28 +75,21 @@ class Bar():
 
         duration_delta = self.duration - total_duration
 
-        if duration_delta < 0:
+        # We create a index list and shuffle it
+        indexs = list(range(self.len()))
+        random.shuffle(indexs)
+        
+        while duration_delta < 0:
+            for index in indexs:
+                if self.notes[index].duration is MINIMAL_DURATION:
+                    poped_note = self.notes.pop(index)
+                    duration_delta += poped_note.duration
 
-            shorter_note_index = None
-            for i in range(len(self.notes)):
-                # check duration
-                if (self.notes[i].duration - duration_delta) >= MINIMAL_DURATION:
-                    shorter_note_index = i
-                    break
+                elif self.notes[index].duration > MINIMAL_DURATION:
+                    # We search a shorter duration
+                    for duration in reverse(NOTE_DURATIONS):
+                        difference = self.notes[index].duration - duration
 
-            # if no adecuate note was found
-            if shorter_note_index is None:
-                self.notes.pop()
-
-                # recursive call
-                self.renew_integrity()
-
-            else:
-                self.notes[shorter_note_index].duration -= duration_delta
-
-        elif duration_delta > 0:
-            # select a random note
-            longer_note_index = random.randint(0, len(self.notes) - 1)
-
-            # longer its duration
-            self.notes[longer_note_index].duration += duration_delta
+                        if difference > 0:
+                            self.notes[index].duration = duration
+                            duration_delta += difference 
