@@ -35,7 +35,7 @@ def play_midi(midi_file):
     # play midi
     try:
         clock = pygame.time.Clock()
-        pygame.mixer.music.load(PRODUCT_DIR + midi_file)
+        pygame.mixer.music.load(midi_file)
 
         print(f"MIXER: playing {midi_file}")
         pygame.mixer.music.play()
@@ -44,22 +44,20 @@ def play_midi(midi_file):
             clock.tick(30) # check if playback has finished
 
     except KeyboardInterrupt:
-        # if user hits Ctrl/C then stop
+        # if user hits Ctrl/C then
         pygame.mixer.music.stop()
         print('')
 
 
-def toMidi(baseNote: int, scale: list, barNumber: int, individual: np.array, generation: int, indId: int):
+def toMidi(individual: list, generation: int, indId: int):
     ''' Generates a midi file '''
 
     track    = 0
     channel  = 0
     time     = 0   # In beats
-    duration = 1   # In beats
+    duration = 1   # In beats, default value
     tempo    = 100  # In BPM
     volume   = 100 # 0-127, as per the MIDI standard
-
-    indLen = len(individual)
 
     MyMIDI = MIDIFile(1)
 
@@ -67,12 +65,16 @@ def toMidi(baseNote: int, scale: list, barNumber: int, individual: np.array, gen
     MyMIDI.addTempo(track, time, tempo)
 
     filename = str(generation) + "-" + str(indId) + ".mid"
-    print(filename)
 
-    for i in range(indLen):
-        #duration = randDuration[random.randint(0,3)]
-        MyMIDI.addNote(track, channel, int(individual[i]), time, duration, volume)
-        time = time + 1
+    for bar in individual:
+        # print(f"Notas en este bar: {len(bar.notes)}")
+
+        for note in bar.notes:
+            # print(note.tone)
+            # print(note.duration)
+
+            MyMIDI.addNote(track, channel, note.tone, time, note.duration, volume)
+            time = time + note.duration # This implies notes will be played 1 by 1
 
     with open(PRODUCT_DIR + filename, "wb") as output_file:
         MyMIDI.writeFile(output_file)
