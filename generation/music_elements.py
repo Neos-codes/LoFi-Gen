@@ -1,4 +1,5 @@
 import random
+from utils import shuffled # local module
 
 # standar durations of notes
 NOTE_DURATIONS = [0.25, 0.5, 1, 2]
@@ -75,21 +76,20 @@ class Bar():
 
         duration_delta = self.duration - total_duration
 
-        # We create a index list and shuffle it
-        indexs = list(range(self.len()))
-        random.shuffle(indexs)
-        
         while duration_delta < 0:
-            for index in indexs:
-                if self.notes[index].duration is MINIMAL_DURATION:
-                    poped_note = self.notes.pop(index)
-                    duration_delta += poped_note.duration
+            for note in shuffled(self.notes):
+                if note.duration is MINIMAL_DURATION:
+                    self.notes.remove(note)
+                    duration_delta += note.duration
 
-                elif self.notes[index].duration > MINIMAL_DURATION:
+                elif note.duration > MINIMAL_DURATION:
                     # We search a shorter duration
-                    for duration in reverse(NOTE_DURATIONS):
-                        difference = self.notes[index].duration - duration
+                    for duration in reversed(NOTE_DURATIONS):
+                        difference = note.duration - duration
 
                         if difference > 0:
-                            self.notes[index].duration = duration
-                            duration_delta += difference 
+                            # get index of the note in original list
+                            note_index = self.notes.index(note)
+                            # modify original list
+                            self.notes[note_index].duration = duration
+                            duration_delta += difference

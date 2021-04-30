@@ -78,3 +78,12 @@ def toMidi(individual: list, generation: int, indId: int):
 
     with open(PRODUCT_DIR + filename, "wb") as output_file:
         MyMIDI.writeFile(output_file)
+
+
+def shuffled(not_shuffled):
+    ''' returns a shuffled list'''
+
+    new_list = not_shuffled.copy()
+    random.shuffle(new_list)
+
+    return new_list
