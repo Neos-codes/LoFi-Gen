@@ -92,4 +92,6 @@ class Bar():
                             note_index = self.notes.index(note)
                             # modify original list
                             self.notes[note_index].duration = duration
+
                             duration_delta += difference
+                            break
