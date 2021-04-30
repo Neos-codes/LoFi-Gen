@@ -111,7 +111,7 @@ def mutationFunction(population: list, mutationRate: float, scale: list):
 
                 if value < mutationRate:
                     new_tone = random.choice(scale)
-                    new_duration = random.choice(NOTE_DURATIONS)
+                    note.duration = random.choice(NOTE_DURATIONS)
 
             bar.renew_integrity()                    
 
