@@ -102,18 +102,17 @@ def crossoverFunction(selected_index: list, population: list):
 def mutationFunction(population: list, mutationRate: float, scale: list):
     ''' mutates notes from individuals '''
 
-    num_ind = len(population)
-
     for ind in population:
         for bar in ind:
             for note in bar.notes:
                 value = random.uniform(0,1)
 
                 if value < mutationRate:
-                    note.tone = random.choice(scale)
-                    note.duration = random.choice(NOTE_DURATIONS)
+                    note_index = bar.notes.index(note)
+                    bar.notes[note_index].tone = random.choice(scale)
+                    bar.notes[note_index].duration = random.choice(NOTE_DURATIONS)
 
-            bar.renew_integrity()                    
+            bar.renew_integrity()
 
     return population
 
