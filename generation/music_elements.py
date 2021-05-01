@@ -107,36 +107,35 @@ class Mood():
     def __init__(self, tonic: str, tonic_midi: int):
         self.tonic = tonic
         self.tonic_midi = tonic_midi
+        self.scale_.append(tonic_midi)
         print("Tonic in midi: " + str(self.tonic_midi))
+        
 
-    def get_mood(self, mood_: str):
+    def set_mood(self, mood_: str):
         self.mood = mood_
+
+    def set_bpm(self, bpm_: int):
+        self.bpm = bpm_
 
 
     def append_scale(self, scale: tuple):
         self.scales.append(scale)
-    
 
-    def scales_in_mood(self):
-        for scales_ in self.scales:
-            printf("Hi hi")     # Revisar esta wea
-    
 
     def select_scale(self):
+        #Tomar la nota base de la escala
         actual_note = self.tonic_midi
         rand_scale = random.choice(self.scales)
-        print("RandScale: " + rand_scale[0])
         print("Scale selected: " + rand_scale[0])
         scale_len = len(rand_scale[1])
+        print("scale len: " + str(scale_len * 3))
         for midi_note in range(scale_len * 3):
-            self.scale_.append(actual_note + rand_scale[1][midi_note%len(rand_scale[1])])
-            print("Midi note: " + str(rand_scale[1][midi_note%len(rand_scale[1])]))
-        return rand_scale
+            aux_note = actual_note + rand_scale[1][midi_note%len(rand_scale[1])]
+            self.scale_.append(aux_note)
+            #print("Midi note: " + str(aux_note))
+            actual_note = aux_note
+        for x in self.scale_:
+            print(x)
 
-
-    def get_tonic(self, tonic: str, tonic_midi: int):
-        self.tonic = tonic
-        self.tonic_midi = tonic_midi
-        print("Tonic: " + self.tonic + " in MIDI: " + str(self.tonic_midi))
 
     

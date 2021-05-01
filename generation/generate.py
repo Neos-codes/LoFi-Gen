@@ -137,7 +137,7 @@ def generateInitialPop(scale: list, num_bars: int, num_ind: int):
     return population
 
 
-def makeScale(note: str):
+def makeScale():
 
     scale = []
 
@@ -177,25 +177,28 @@ def makeScale(note: str):
     mood = Mood(tonic, dictyNotes[tonic])
     
     # Identificamos que escalas dan un mood en especifico
-    print("Please, give us the number of your mood\n" + "1. Sad/Sentimental/Depressive  2. Contemplative/Dreamy/Cosmic/Deep  3. Emotional/Nostalgic  4. Love  5. Abstract/Free")
+    print("Please, give us the number of your mood\n" + "1. Sad/Sentimental/Depressive\n2. Contemplative/Dreamy/Cosmic/Deep\n3. Emotional/Nostalgic\n4. Love\n5. Abstract/Free")
     mood_t = int(input())
 
     if mood_t == 1:
-        mood.get_mood("Sad")
+        mood.set_mood("Sad")
+        mood.set_bpm(random.randint(65, 75))
         mood.append_scale(dorian)
         mood.append_scale(phrygian)
         mood.append_scale(aeolian)
         mood.append_scale(bluesScale)
     
     if mood_t == 2:
-        mood.get_mood("Dreamy/Contemplative")
+        mood.set_mood("Dreamy/Contemplative")
+        mood.set_bpm(random.randint(85, 95))
         mood.append_scale(lydian)
         mood.append_scale(mixolydian)
         mood.append_scale(bluesScale)
         mood.append_scale(wholeTone)
     
     if mood_t == 3:
-        mood.get_mood("Nostalgic")
+        mood.set_mood("Nostalgic")
+        mood.set_bpm(random.randint(70, 85))
         mood.append_scale(dorian)
         mood.append_scale(mixolydian)
         mood.append_scale(aeolian)
@@ -203,16 +206,20 @@ def makeScale(note: str):
         mood.append_scale(phrigianDominant)
     
     if mood_t == 4:
-        mood.get_mood("Love")
+        mood.set_mood("Love")
+        mood.set_bpm(random.randint(90, 100))
         mood.append_scale(majorScale)
         mood.append_scale(pentatonicScale)
     
     if mood_t == 5:
-        mood.get_mood("Abstract/Free")
+        mood.set_mood("Abstract/Free")
+        mood.set_bpm(random.randint(66, 76))
         mood.append_scale(chromatic)
         mood.append_scale(lydian)
 
     mood.select_scale()
+
+    return mood
 
 
 
@@ -244,11 +251,13 @@ def main():
 
     randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
 
-    makeScale("C")
+    mood = makeScale()
+
+    scale = mood.scale_
 
     #pyo
     #EventScale
-    scale = [47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74]
+    #scale = [47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74]
 
 
     ### === INPUT === ###
@@ -281,7 +290,7 @@ def main():
 
     # creamos los archivos midi
     for i in range(numInd):
-        utils.toMidi(population[i], generation_number, i + 1)
+        utils.toMidi(population[i], generation_number, i + 1, mood.bpm)
 
 
     ### === GENETIC ITERATIONS === ###

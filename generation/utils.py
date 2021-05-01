@@ -49,15 +49,17 @@ def play_midi(midi_file):
         print('')
 
 
-def toMidi(individual: list, generation: int, indId: int):
+def toMidi(individual: list, generation: int, indId: int, bpm: int):
     ''' Generates a midi file '''
 
     track    = 0
     channel  = 0
-    time     = 0   # In beats
-    duration = 1   # In beats, default value
-    tempo    = 100  # In BPM
-    volume   = 100 # 0-127, as per the MIDI standard
+    time     = 0    # In beats
+    duration = 1    # In beats, default value
+    tempo    = bpm  # In BPM
+    volume   = 100  # 0-127, as per the MIDI standard
+
+    print("bpm: " + str(tempo))
 
     MyMIDI = MIDIFile(1)
 
