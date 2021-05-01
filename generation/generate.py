@@ -3,7 +3,7 @@
 import random
 import numpy as np
 import utils # local module
-from music_elements import Note, Bar, NOTE_DURATIONS # local module
+from music_elements import Note, Bar, NOTE_DURATIONS, Mood # local module
 
 def fitnessFunction(fitnessArray: np.array, generation_number):
     ''' rates the quality of the individuals '''
@@ -136,18 +136,115 @@ def generateInitialPop(scale: list, num_bars: int, num_ind: int):
 
     return population
 
+
+def makeScale(note: str):
+
+    scale = []
+
+    # Tonics in a dictionary first
+    dictyNotes = {
+        "C": 48,
+        "C#": 49,
+        "D": 50,
+        "D#": 51,
+        "E": 52,
+        "F": 53,
+        "F#": 54,
+        "G": 55,
+        "G#": 56,
+        "A": 57,
+        "A#": 58,
+        "B": 59
+    }
+    #Scales and moods
+    ##Las escalas NO repiren su ultima nota
+    ##Todas DEBEN sumar 12
+    majorScale = ("Major", [2, 2, 1, 2, 2, 2, 1])                      # Sweet, Love    "Ionic Scale"
+    dorian = ("Dorian", [2, 1, 2, 2, 2, 1, 2])                         # melancolic, deep
+    phrygian = ("Phrygian", [1, 2, 2, 2, 1, 2, 2])                     # depressed, mistery
+    lydian = ("Lydian", [2, 2, 2, 1, 2, 2, 1])                         # floaty, otherworld, space
+    mixolydian = ("Mixolydian", [2, 2, 1, 2, 2, 1, 2])                 # contemplative, sentimental
+    aeolian = ("Aeolian", [2, 1, 2, 2, 1, 2, 2])                       # sad, emotional  MINOR SCALE
+    locrian = ("Locrian", [1, 2, 2, 1, 2, 2, 2])                       # inquientante
+    bluesScale = ("Blues", [3, 2, 1, 1, 3, 2])                         # emotional, regrets, soulful
+    chromatic = ("Chromatic", [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])    # abstract, free, anxiety
+    wholeTone = ("Whole Tone", [2, 2, 2, 2, 2, 2])                     # dreamy, cosmic
+    phrigianDominant = ("Phrygian Dominant", [1, 3, 1, 2, 1, 2 ,2])    # serious, severe
+    pentatonicScale = ("Pentatonic", [2, 2, 3, 2, 3])                  # Joy 
+
+    print("Please, enter the Tonic of your scale\n C C# D D# E F F# G G# A A# B")
+    tonic = input()
+    mood = Mood(tonic, dictyNotes[tonic])
+    
+    # Identificamos que escalas dan un mood en especifico
+    print("Please, give us the number of your mood\n" + "1. Sad/Sentimental/Depressive  2. Contemplative/Dreamy/Cosmic/Deep  3. Emotional/Nostalgic  4. Love  5. Abstract/Free")
+    mood_t = int(input())
+
+    if mood_t == 1:
+        mood.get_mood("Sad")
+        mood.append_scale(dorian)
+        mood.append_scale(phrygian)
+        mood.append_scale(aeolian)
+        mood.append_scale(bluesScale)
+    
+    if mood_t == 2:
+        mood.get_mood("Dreamy/Contemplative")
+        mood.append_scale(lydian)
+        mood.append_scale(mixolydian)
+        mood.append_scale(bluesScale)
+        mood.append_scale(wholeTone)
+    
+    if mood_t == 3:
+        mood.get_mood("Nostalgic")
+        mood.append_scale(dorian)
+        mood.append_scale(mixolydian)
+        mood.append_scale(aeolian)
+        mood.append_scale(bluesScale)
+        mood.append_scale(phrigianDominant)
+    
+    if mood_t == 4:
+        mood.get_mood("Love")
+        mood.append_scale(majorScale)
+        mood.append_scale(pentatonicScale)
+    
+    if mood_t == 5:
+        mood.get_mood("Abstract/Free")
+        mood.append_scale(chromatic)
+        mood.append_scale(lydian)
+
+    mood.select_scale()
+
+
+
+
+    
+
+
+
+
+
 def main():
     #https://github.com/kiecodes/genetic-algorithms/blob/master/algorithms/genetic.py
     #https://github.com/kiecodes/generate-music/blob/main/algorithms/genetic.py
 
     ##Las escalas NO repiren su ultima nota
     ##Todas DEBEN sumar 12
-    majorScale = [2, 2, 1, 2, 2, 2, 1]
-    bluesScale = [3, 2, 1, 1, 3, 2]
-    minorScale = [2, 1, 2, 2, 1, 2, 2]
-    pentatonicScale = [2, 2, 3, 2, 3]
+    majorScale = [2, 2, 1, 2, 2, 2, 1]   #Jonico   Sweet, Love
+    dorian = [2, 1, 2, 2, 2, 1, 2]       # melancolic, deep
+    phrygian = [1, 2, 2, 2, 1, 2, 2]     # depressed, mistery
+    lydian = [2, 2, 2, 1, 2, 2, 1]       # floaty, otherworld, space
+    mixolydian = [2, 2, 1, 2, 2, 1, 2]   # contemplative, sentimental
+    aeolian = [2, 1, 2, 2, 1, 2, 2]      # sad, emotional  MINOR SCALE
+    locrian = [1, 2, 2, 1, 2, 2, 2]      # inquientante
+    bluesScale = [3, 2, 1, 1, 3, 2]      # emotional, regrets, soulful
+    chromatic = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # abstract, free, anxiety
+    wholeTone = [2, 2, 2, 2, 2, 2]       # dreamy, cosmic
+    phrigianDominant = [1, 3, 1, 2, 1, 2 ,2]  # serious, severe
+    pentatonicScale = [2, 2, 3, 2, 3]     # Joy 
 
     randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
+
+    makeScale("C")
 
     #pyo
     #EventScale

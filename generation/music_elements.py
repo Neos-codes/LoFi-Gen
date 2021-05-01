@@ -95,3 +95,48 @@ class Bar():
 
                             duration_delta += difference
                             break
+
+class Mood():
+   #""" Un mood con escalas """
+
+    scales = []
+    scale_ = []
+    tonic = "empty"
+    tonic_midi = 0
+
+    def __init__(self, tonic: str, tonic_midi: int):
+        self.tonic = tonic
+        self.tonic_midi = tonic_midi
+        print("Tonic in midi: " + str(self.tonic_midi))
+
+    def get_mood(self, mood_: str):
+        self.mood = mood_
+
+
+    def append_scale(self, scale: tuple):
+        self.scales.append(scale)
+    
+
+    def scales_in_mood(self):
+        for scales_ in self.scales:
+            printf("Hi hi")     # Revisar esta wea
+    
+
+    def select_scale(self):
+        actual_note = self.tonic_midi
+        rand_scale = random.choice(self.scales)
+        print("RandScale: " + rand_scale[0])
+        print("Scale selected: " + rand_scale[0])
+        scale_len = len(rand_scale[1])
+        for midi_note in range(scale_len * 3):
+            self.scale_.append(actual_note + rand_scale[1][midi_note%len(rand_scale[1])])
+            print("Midi note: " + str(rand_scale[1][midi_note%len(rand_scale[1])]))
+        return rand_scale
+
+
+    def get_tonic(self, tonic: str, tonic_midi: int):
+        self.tonic = tonic
+        self.tonic_midi = tonic_midi
+        print("Tonic: " + self.tonic + " in MIDI: " + str(self.tonic_midi))
+
+    
