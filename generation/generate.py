@@ -233,7 +233,7 @@ def makeScale():
 def main():
     #https://github.com/kiecodes/genetic-algorithms/blob/master/algorithms/genetic.py
     #https://github.com/kiecodes/generate-music/blob/main/algorithms/genetic.py
-
+    """
     ##Las escalas NO repiren su ultima nota
     ##Todas DEBEN sumar 12
     majorScale = [2, 2, 1, 2, 2, 2, 1]   #Jonico   Sweet, Love
@@ -248,7 +248,7 @@ def main():
     wholeTone = [2, 2, 2, 2, 2, 2]       # dreamy, cosmic
     phrigianDominant = [1, 3, 1, 2, 1, 2 ,2]  # serious, severe
     pentatonicScale = [2, 2, 3, 2, 3]     # Joy 
-
+    """
     randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
 
     mood = makeScale()

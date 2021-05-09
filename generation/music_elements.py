@@ -104,6 +104,7 @@ class Mood():
     tonic = "empty"
     tonic_midi = 0
 
+    # Constructor, se setea aqui la tonica y el valor midi de la tonica
     def __init__(self, tonic: str, tonic_midi: int):
         self.tonic = tonic
         self.tonic_midi = tonic_midi
@@ -111,31 +112,39 @@ class Mood():
         print("Tonic in midi: " + str(self.tonic_midi))
         
 
+    # Aqui se setea el mood de la pista
     def set_mood(self, mood_: str):
         self.mood = mood_
 
+    # Aqui se setea el bpm según el mood
     def set_bpm(self, bpm_: int):
         self.bpm = bpm_
 
-
+    # Aqui se guardan las escalas para escoger una y crear las notas
     def append_scale(self, scale: tuple):
         self.scales.append(scale)
 
 
     def select_scale(self):
-        #Tomar la nota base de la escala
+        # Tomar la nota base de la escala (Tonica)
         actual_note = self.tonic_midi
+        # Se escoge una escala segun el mood ingresado
         rand_scale = random.choice(self.scales)
         print("Scale selected: " + rand_scale[0])
+        # Se guarda el largo de la escala
         scale_len = len(rand_scale[1])
         print("scale len: " + str(scale_len * 3))
+        # Se crean 3 octavas de la escala
         for midi_note in range(scale_len * 3):
             aux_note = actual_note + rand_scale[1][midi_note%len(rand_scale[1])]
             self.scale_.append(aux_note)
             #print("Midi note: " + str(aux_note))
             actual_note = aux_note
+        # Se printea la escala
         for x in self.scale_:
             print(x)
+        # Limpiar la lista scales de todas las escalas, ya no es util
+        self.scales.clear()
 
 
     
