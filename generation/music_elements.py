@@ -2,10 +2,10 @@ import random
 from utils import shuffled # local module
 
 # standar durations of notes
-NOTE_DURATIONS = [0.25, 0.5, 1, 2]
+NOTE_DURATIONS = [0.5, 0.5, 0.5, 1, 1, 1, 1, 1, 1, 2, 2]
 
 # The shortest note's duration
-MINIMAL_DURATION = 0.25
+MINIMAL_DURATION = 0.5
 
 class Note():
     ''' Note in MIDI '''
@@ -100,7 +100,7 @@ class Mood():
    #""" Un mood con escalas """
 
     scales = []
-    scale_ = []
+    scale_ =  []
     tonic = "empty"
     tonic_midi = 0
 
@@ -133,9 +133,9 @@ class Mood():
         print("Scale selected: " + rand_scale[0])
         # Se guarda el largo de la escala
         scale_len = len(rand_scale[1])
-        print("scale len: " + str(scale_len * 3))
+        print("scale len: " + str(scale_len * 2))
         # Se crean 3 octavas de la escala
-        for midi_note in range(scale_len * 3):
+        for midi_note in range(scale_len * 2):
             aux_note = actual_note + rand_scale[1][midi_note%len(rand_scale[1])]
             self.scale_.append(aux_note)
             #print("Midi note: " + str(aux_note))

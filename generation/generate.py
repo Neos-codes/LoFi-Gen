@@ -84,7 +84,7 @@ def crossoverFunction(selected_index: list, population: list):
         parent2 = population[selected_index[i*2 + 1]]
 
         # generamos un splitpoint
-        split_point = random.randint(0, num_bars)
+        split_point = random.randint(1, num_bars - 1)
 
         # creamos al nuevo ind
         new_ind = []
@@ -279,7 +279,7 @@ def main():
 
     # print("Enter mutation rate amount (0-1): ")
     # mutationRate = float(input())
-    mutationRate = 0.2
+    mutationRate = 0.5
 
     ### === INITIAL POPULATION === ###
 
@@ -325,7 +325,7 @@ def main():
 
         # creamos los archivos midi
         for i in range(numInd):
-            utils.toMidi(population[i], generation_number, i + 1)
+            utils.toMidi(population[i], generation_number, i + 1, mood.bpm)
 
         print("Continue? (1/0)")
         run = int(input())
