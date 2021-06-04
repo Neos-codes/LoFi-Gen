@@ -59,8 +59,6 @@ def toMidi(individual: list, generation: int, indId: int, bpm: int):
     tempo    = bpm  # In BPM
     volume   = 100  # 0-127, as per the MIDI standard
 
-    print("bpm: " + str(tempo))
-
     MyMIDI = MIDIFile(1)
 
     #One track, defaults to format 1 (tempo track automatically created)

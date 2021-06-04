@@ -31,7 +31,7 @@ class Bar():
         for note in self.notes:
             notes_str = f"{notes_str} {note}"
 
-        return f"({self.pulses}/{self.duration}, {notes_str})"
+        return f"[{self.pulses}/{self.duration}, {notes_str}]"
 
     # this works as an alternative constructor
     @classmethod

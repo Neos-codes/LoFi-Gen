@@ -1,6 +1,7 @@
 """
 """
 import random
+import copy
 import numpy as np
 import utils # local module
 from music_elements import Note, Bar, NOTE_DURATIONS, Mood # local module
@@ -12,10 +13,17 @@ def fitnessFunction(fitnessArray: np.array, generation_number):
 
     for i in range(amountInd):
         file_name = f"{generation_number}-{i+1}.mid"
-        utils.play_midi("product/" + file_name)
+        # utils.play_midi("product/" + file_name)
 
         print("Rating for", i+1 ,"(1-10): ", end='')
-        fitnessArray[i] = (input())
+
+        # dev code
+        random_value = random.randint(1, 10)
+        fitnessArray[i] = random_value
+        print(f"value assigned: {random_value}")
+
+        # fitnessArray[i] = (input())
+
 
     return fitnessArray
 
@@ -90,9 +98,11 @@ def crossoverFunction(selected_index: list, population: list):
         new_ind = []
         for j in range(num_bars):
             if j < split_point:
-                new_ind.append(parent1[j])
+                # usamos deepcopy para generar un nuevo elemento,
+                # en vez de pushear la referencia al antiguo elemento
+                new_ind.append(copy.deepcopy(parent1[j]))
             else:
-                new_ind.append(parent2[j])
+                new_ind.append(copy.deepcopy(parent2[j]))
 
         # lo agregamos a la nueva population
         new_population.append(new_ind)
@@ -222,14 +232,6 @@ def makeScale():
     return mood
 
 
-
-
-    
-
-
-
-
-
 def main():
     #https://github.com/kiecodes/genetic-algorithms/blob/master/algorithms/genetic.py
     #https://github.com/kiecodes/generate-music/blob/main/algorithms/genetic.py
@@ -247,17 +249,15 @@ def main():
     chromatic = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # abstract, free, anxiety
     wholeTone = [2, 2, 2, 2, 2, 2]       # dreamy, cosmic
     phrigianDominant = [1, 3, 1, 2, 1, 2 ,2]  # serious, severe
-    pentatonicScale = [2, 2, 3, 2, 3]     # Joy 
+    pentatonicScale = [2, 2, 3, 2, 3]     # Joy
     """
-    randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
+    # randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
 
-    mood = makeScale()
+    # mood = makeScale()
 
-    scale = mood.scale_
+    # scale = mood.scale_
 
-    #pyo
-    #EventScale
-    #scale = [47, 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74]
+    scale = [48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72]
 
 
     ### === INPUT === ###
@@ -290,7 +290,7 @@ def main():
 
     # creamos los archivos midi
     for i in range(numInd):
-        utils.toMidi(population[i], generation_number, i + 1, mood.bpm)
+        utils.toMidi(population[i], generation_number, i + 1, 70)#mood.bpm) comentado x mientras
 
 
     ### === GENETIC ITERATIONS === ###
@@ -325,7 +325,7 @@ def main():
 
         # creamos los archivos midi
         for i in range(numInd):
-            utils.toMidi(population[i], generation_number, i + 1, mood.bpm)
+            utils.toMidi(population[i], generation_number, i + 1, 70)#mood.bpm)
 
         print("Continue? (1/0)")
         run = int(input())
