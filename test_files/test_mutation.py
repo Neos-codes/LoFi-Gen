@@ -1,4 +1,7 @@
-# Standar import to generation package
+'''
+    Testing if mutationFunction is working correctly
+                                                    '''
+
 import sys
 import os
 sys.path.append(os.path.abspath('../generation'))

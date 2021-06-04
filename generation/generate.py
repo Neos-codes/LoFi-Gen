@@ -8,12 +8,12 @@ from music_elements import Note, Bar, NOTE_DURATIONS, Mood # local module
 
 def fitnessFunction(fitnessArray: np.array, generation_number):
     ''' rates the quality of the individuals '''
-    
+
     amountInd = len(fitnessArray)
 
     for i in range(amountInd):
         file_name = f"{generation_number}-{i+1}.mid"
-        # utils.play_midi("product/" + file_name)
+        utils.play_midi("product/" + file_name)
 
         print("Rating for", i+1 ,"(1-10): ", end='')
 
@@ -122,7 +122,7 @@ def mutationFunction(population: list, mutationRate: float, scale: list):
                     bar.notes[note_index].tone = random.choice(scale)
                     bar.notes[note_index].duration = random.choice(NOTE_DURATIONS)
 
-            bar.renew_integrity()
+            bar.renew_integrity(scale)
 
     return population
 

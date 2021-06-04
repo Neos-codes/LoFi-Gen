@@ -2,7 +2,7 @@ import random
 from utils import shuffled # local module
 
 # standar durations of notes
-NOTE_DURATIONS = [0.5, 0.5, 0.5, 1, 1, 1, 1, 1, 1, 2, 2]
+NOTE_DURATIONS = [0.5, 1, 2]
 
 # The shortest note's duration
 MINIMAL_DURATION = 0.5
@@ -66,8 +66,8 @@ class Bar():
 
         return len(self.notes)
 
-    def renew_integrity(self):
-        ''' check the notes of the bar and adjust them if the duration do not match '''
+    def renew_integrity(self, scale: list):
+        ''' checks the duration of the bar and adds or remove notes if the duration do not match '''
 
         # calculate total duration
         total_duration = 0
@@ -76,25 +76,34 @@ class Bar():
 
         duration_delta = self.duration - total_duration
 
-        while duration_delta < 0:
+        while duration_delta != 0:
             for note in shuffled(self.notes):
-                if note.duration is MINIMAL_DURATION:
+                if duration_delta < 0: # we try to reduce bar's duration
+
+                    # By removing notes
                     self.notes.remove(note)
+
                     duration_delta += note.duration
 
-                elif note.duration > MINIMAL_DURATION:
-                    # We search a shorter duration
-                    for duration in reversed(NOTE_DURATIONS):
-                        difference = note.duration - duration
+                else: # we try to increse bar's duration
 
-                        if difference > 0:
-                            # get index of the note in original list
-                            note_index = self.notes.index(note)
-                            # modify original list
-                            self.notes[note_index].duration = duration
-
-                            duration_delta += difference
+                    # By adding notes
+                    new_duration = None
+                    for duration in NOTE_DURATIONS:
+                        if duration == duration_delta:
+                            new_duration = duration_delta
                             break
+
+                    if not new_duration:
+                        new_duration = random.choice(NOTE_DURATIONS)
+
+                    new_tone = random.choice(scale) # this could be better, using a relative tone
+
+                    new_note = Note(new_tone, new_duration)
+                    self.notes.append(new_note)
+
+                    duration_delta -= new_duration
+
 
 class Mood():
    #""" Un mood con escalas """
@@ -145,6 +154,3 @@ class Mood():
             print(x)
         # Limpiar la lista scales de todas las escalas, ya no es util
         self.scales.clear()
-
-
-    
