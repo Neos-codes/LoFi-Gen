@@ -14,6 +14,8 @@ for _ in range(4):
     ind.append(Bar.from_scale(SCALE, 4, 4))
 
 for bar in ind:
-    print(bar)
+    for note in bar.notes:
+        print(note.tone)
+        print(note.duration)
 
-toMidi(ind, 'silence', 1, 60)
+# toMidi(ind, 'silence', 1, 60)
