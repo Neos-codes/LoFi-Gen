@@ -41,7 +41,7 @@ class Bar():
         notes = []
         remaining_time = duration
 
-        while remaining_time > MINIMAL_DURATION:
+        while remaining_time >= MINIMAL_DURATION:
             # select a random tone from scale
             note_tone = random.choice(scale)
 
