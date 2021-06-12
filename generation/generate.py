@@ -18,11 +18,11 @@ def fitnessFunction(fitnessArray: np.array, generation_number):
         print("Rating for", i+1 ,"(1-10): ", end='')
 
         # dev code
-        random_value = random.randint(1, 10)
-        fitnessArray[i] = random_value
-        print(f"value assigned: {random_value}")
+        # random_value = random.randint(1, 10)
+        # fitnessArray[i] = random_value
+        # print(f"value assigned: {random_value}")
 
-        # fitnessArray[i] = (input())
+        fitnessArray[i] = (input())
 
 
     return fitnessArray
@@ -253,11 +253,14 @@ def main():
     """
     # randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
 
-    # mood = makeScale()
+    mood = makeScale()
 
-    # scale = mood.scale_
+    scale = mood.scale_
 
-    scale = [48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 0] # 0 means silence
+    # quick fix for adding silence to scale
+    scale.append(0)
+
+    # scale = [48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 0] # 0 means silence
 
 
     ### === INPUT === ###
@@ -269,17 +272,17 @@ def main():
     #print("Pauses? (1/0)")
     #pauses = int(input())
 
-    # print("Enter tracks amount: ")
-    # numIndividuals = int(input())
-    numInd = 4
+    print("Enter amount of indiviuals per population: ")
+    numInd = int(input())
+    # numInd = 4
 
-    # print("Enter bar amount: ")
-    # numBars = int(input())
-    numBars = 4
+    print("Enter the amount of bars per individual: ")
+    numBars = int(input())
+    # numBars = 4
 
-    # print("Enter mutation rate amount (0-1): ")
-    # mutationRate = float(input())
-    mutationRate = 0.5
+    print("Enter mutation rate amount (0-1): ")
+    mutationRate = float(input())
+    # mutationRate = 0.5
 
     ### === INITIAL POPULATION === ###
 
@@ -290,7 +293,7 @@ def main():
 
     # creamos los archivos midi
     for i in range(numInd):
-        utils.toMidi(population[i], generation_number, i + 1, 70)#mood.bpm) comentado x mientras
+        utils.toMidi(population[i], generation_number, i + 1, mood.bpm)
 
 
     ### === GENETIC ITERATIONS === ###
@@ -325,7 +328,7 @@ def main():
 
         # creamos los archivos midi
         for i in range(numInd):
-            utils.toMidi(population[i], generation_number, i + 1, 70)#mood.bpm)
+            utils.toMidi(population[i], generation_number, i + 1, mood.bpm)
 
         print("Continue? (1/0)")
         run = int(input())

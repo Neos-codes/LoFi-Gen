@@ -139,10 +139,10 @@ class Mood():
         actual_note = self.tonic_midi
         # Se escoge una escala segun el mood ingresado
         rand_scale = random.choice(self.scales)
-        print("Scale selected: " + rand_scale[0])
+        # print("Scale selected: " + rand_scale[0])
         # Se guarda el largo de la escala
         scale_len = len(rand_scale[1])
-        print("scale len: " + str(scale_len * 2))
+        # print("scale len: " + str(scale_len * 2))
         # Se crean 3 octavas de la escala
         for midi_note in range(scale_len * 2):
             aux_note = actual_note + rand_scale[1][midi_note%len(rand_scale[1])]
@@ -150,7 +150,7 @@ class Mood():
             #print("Midi note: " + str(aux_note))
             actual_note = aux_note
         # Se printea la escala
-        for x in self.scale_:
-            print(x)
+        # for x in self.scale_:
+        #     print(x)
         # Limpiar la lista scales de todas las escalas, ya no es util
         self.scales.clear()

@@ -61,7 +61,7 @@ def toMidi(individual: list, generation, indId, bpm: int):
 
     MyMIDI = MIDIFile(1)
 
-    #One track, defaults to format 1 (tempo track automatically created)
+    # One track, defaults to format 1 (tempo track automatically created)
     MyMIDI.addTempo(track, time, tempo)
 
     filename = f"{generation}-{indId}.mid"
