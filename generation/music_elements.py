@@ -108,10 +108,11 @@ class Bar():
 class Mood():
    #""" Un mood con escalas """
 
-    scales = []
+    steps = None
     scale_ =  []
     tonic = "empty"
     tonic_midi = 0
+    chords = []
 
     # Constructor, se setea aqui la tonica y el valor midi de la tonica
     def __init__(self, tonic: str, tonic_midi: int):
@@ -131,26 +132,52 @@ class Mood():
 
     # Aqui se guardan las escalas para escoger una y crear las notas
     def append_scale(self, scale: tuple):
-        self.scales.append(scale)
+        self.steps = scale
 
 
     def select_scale(self):
         # Tomar la nota base de la escala (Tonica)
         actual_note = self.tonic_midi
-        # Se escoge una escala segun el mood ingresado
-        rand_scale = random.choice(self.scales)
-        # print("Scale selected: " + rand_scale[0])
         # Se guarda el largo de la escala
-        scale_len = len(rand_scale[1])
-        # print("scale len: " + str(scale_len * 2))
-        # Se crean 3 octavas de la escala
+        scale_len = len(self.steps[1])
+        # Se crean 2 octavas de la escala
         for midi_note in range(scale_len * 2):
-            aux_note = actual_note + rand_scale[1][midi_note%len(rand_scale[1])]
+            aux_note = actual_note + self.steps[1][midi_note % len(self.steps[1])]
             self.scale_.append(aux_note)
             #print("Midi note: " + str(aux_note))
             actual_note = aux_note
         # Se printea la escala
-        # for x in self.scale_:
-        #     print(x)
-        # Limpiar la lista scales de todas las escalas, ya no es util
-        self.scales.clear()
+        #for x in self.scale_:
+        #    print(x)
+
+
+    def make_chords(self):
+        actual_note = self.tonic_midi
+        scale = [actual_note]
+        
+        # Crear la escala
+        for i in range(6):
+            actual_note = actual_note + self.steps[1][i % len(self.steps[1])]
+            scale.append(actual_note)
+        
+        
+        # Crear acordes
+        actual_note = self.tonic_midi
+        len_steps = len(self.steps[1])    # Largo de arreglo de steps de la escala
+        for i in range(7):
+            chord = []
+            chord.append(actual_note)
+            acum = 0
+            for j in range(5):
+                acum += self.steps[1][((i + j) % len_steps)]
+                if j == 1:
+                    chord.append(actual_note + acum)
+                if j == 3:
+                    chord.append(actual_note + acum)
+                    continue
+            self.chords.append(chord)
+            actual_note += self.steps[1][i]
+        
+        print("Chords")
+        print(self.chords)
+

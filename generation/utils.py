@@ -49,7 +49,7 @@ def play_midi(midi_file):
         print('')
 
 
-def toMidi(individual: list, generation, indId, bpm: int):
+def toMidi(individual: list, generation, indId, chords_seq: list, bpm: int, tonic: int, onlyChords = False):
     ''' Generates a midi file '''
 
     track    = 0
@@ -59,7 +59,7 @@ def toMidi(individual: list, generation, indId, bpm: int):
     tempo    = bpm  # In BPM
     volume   = 100  # 0-127, as per the MIDI standard
 
-    MyMIDI = MIDIFile(1)
+    MyMIDI = MIDIFile(numTracks = 2)
 
     # One track, defaults to format 1 (tempo track automatically created)
     MyMIDI.addTempo(track, time, tempo)
@@ -74,6 +74,19 @@ def toMidi(individual: list, generation, indId, bpm: int):
 
             else: # silence
                 time = time + note.duration
+    
+    
+    # Aqui se añaden los acordes
+    time = 0
+    for chord in chords_seq:
+        seq_duration = None
+        for i in range(len(chord)):
+            if i == 0:
+                seq_duration = chord[i]
+            else:
+                MyMIDI.addNote(1, channel, chord[i], time, seq_duration, 80)
+        time += seq_duration
+        
 
     with open(PRODUCT_DIR + filename, "wb") as output_file:
         MyMIDI.writeFile(output_file)

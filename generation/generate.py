@@ -146,6 +146,27 @@ def generateInitialPop(scale: list, num_bars: int, num_ind: int):
 
     return population
 
+def generateChords(scale: list, num_bars: int, mood: Mood):
+    """ Generates a sequence of chords """
+    
+    sequence_size = None
+
+    # Leer cuantos compases tendrá la secuencia de acordes
+    while True:
+        print("How many bars will the chords sequence have?")
+        sequence_size = int(input())
+        if sequence_size <  num_bars:
+            print("Invalid number, you can't have a sequence with more bars than the individual, try again")
+        else:
+            break
+    
+    # In C scale this sequence is A minor - G major - F major
+    #chords = [[4, -3, 0, 4], [4, -5, -1, 2], [8, -7, -3, 0]]
+
+    chords = [[4] + mood.chords[5], [4] + mood.chords[4], [8] + mood.chords[3]]
+
+    return chords
+
 
 def makeScale():
 
@@ -169,18 +190,20 @@ def makeScale():
     #Scales and moods
     ##Las escalas NO repiren su ultima nota
     ##Todas DEBEN sumar 12
+    #                       2° 3° 4° 5° 6° 7°
     majorScale = ("Major", [2, 2, 1, 2, 2, 2, 1])                      # Sweet, Love    "Ionic Scale"
-    dorian = ("Dorian", [2, 1, 2, 2, 2, 1, 2])                         # melancolic, deep
-    phrygian = ("Phrygian", [1, 2, 2, 2, 1, 2, 2])                     # depressed, mistery
-    lydian = ("Lydian", [2, 2, 2, 1, 2, 2, 1])                         # floaty, otherworld, space
-    mixolydian = ("Mixolydian", [2, 2, 1, 2, 2, 1, 2])                 # contemplative, sentimental
-    aeolian = ("Aeolian", [2, 1, 2, 2, 1, 2, 2])                       # sad, emotional  MINOR SCALE
-    locrian = ("Locrian", [1, 2, 2, 1, 2, 2, 2])                       # inquientante
-    bluesScale = ("Blues", [3, 2, 1, 1, 3, 2])                         # emotional, regrets, soulful
-    chromatic = ("Chromatic", [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])    # abstract, free, anxiety
-    wholeTone = ("Whole Tone", [2, 2, 2, 2, 2, 2])                     # dreamy, cosmic
-    phrigianDominant = ("Phrygian Dominant", [1, 3, 1, 2, 1, 2 ,2])    # serious, severe
-    pentatonicScale = ("Pentatonic", [2, 2, 3, 2, 3])                  # Joy 
+    minorScale = ("Minor", [2, 1, 2, 2, 1, 2, 2])
+    #dorian = ("Dorian", [2, 1, 2, 2, 2, 1, 2])                         # melancolic, deep
+    #phrygian = ("Phrygian", [1, 2, 2, 2, 1, 2, 2])                     # depressed, mistery
+    #lydian = ("Lydian", [2, 2, 2, 1, 2, 2, 1])                         # floaty, otherworld, space
+    #mixolydian = ("Mixolydian", [2, 2, 1, 2, 2, 1, 2])                 # contemplative, sentimental
+    #aeolian = ("Aeolian", [2, 1, 2, 2, 1, 2, 2])                       # sad, emotional  MINOR SCALE
+    #locrian = ("Locrian", [1, 2, 2, 1, 2, 2, 2])                       # inquientante
+    #bluesScale = ("Blues", [3, 2, 1, 1, 3, 2])                         # emotional, regrets, soulful
+    #chromatic = ("Chromatic", [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])    # abstract, free, anxiety
+    #wholeTone = ("Whole Tone", [2, 2, 2, 2, 2, 2])                     # dreamy, cosmic
+    #phrigianDominant = ("Phrygian Dominant", [1, 3, 1, 2, 1, 2 ,2])    # serious, severe
+    #pentatonicScale = ("Pentatonic", [2, 2, 3, 2, 3])                  # Joy 
 
     print("Please, enter the Tonic of your scale\n C C# D D# E F F# G G# A A# B")
     tonic = input()
@@ -193,41 +216,30 @@ def makeScale():
     if mood_t == 1:
         mood.set_mood("Sad")
         mood.set_bpm(random.randint(65, 75))
-        mood.append_scale(dorian)
-        mood.append_scale(phrygian)
-        mood.append_scale(aeolian)
-        mood.append_scale(bluesScale)
+
     
     if mood_t == 2:
         mood.set_mood("Dreamy/Contemplative")
         mood.set_bpm(random.randint(85, 95))
-        mood.append_scale(lydian)
-        mood.append_scale(mixolydian)
-        mood.append_scale(bluesScale)
-        mood.append_scale(wholeTone)
     
     if mood_t == 3:
         mood.set_mood("Nostalgic")
         mood.set_bpm(random.randint(70, 85))
-        mood.append_scale(dorian)
-        mood.append_scale(mixolydian)
-        mood.append_scale(aeolian)
-        mood.append_scale(bluesScale)
-        mood.append_scale(phrigianDominant)
     
     if mood_t == 4:
         mood.set_mood("Love")
         mood.set_bpm(random.randint(90, 100))
-        mood.append_scale(majorScale)
-        mood.append_scale(pentatonicScale)
     
     if mood_t == 5:
         mood.set_mood("Abstract/Free")
         mood.set_bpm(random.randint(66, 76))
-        mood.append_scale(chromatic)
-        mood.append_scale(lydian)
+    
+    # De momento solo escala mayor
+    mood.append_scale(majorScale)
 
     mood.select_scale()
+
+    mood.make_chords()
 
     return mood
 
@@ -235,22 +247,8 @@ def makeScale():
 def main():
     #https://github.com/kiecodes/genetic-algorithms/blob/master/algorithms/genetic.py
     #https://github.com/kiecodes/generate-music/blob/main/algorithms/genetic.py
-    """
-    ##Las escalas NO repiren su ultima nota
-    ##Todas DEBEN sumar 12
-    majorScale = [2, 2, 1, 2, 2, 2, 1]   #Jonico   Sweet, Love
-    dorian = [2, 1, 2, 2, 2, 1, 2]       # melancolic, deep
-    phrygian = [1, 2, 2, 2, 1, 2, 2]     # depressed, mistery
-    lydian = [2, 2, 2, 1, 2, 2, 1]       # floaty, otherworld, space
-    mixolydian = [2, 2, 1, 2, 2, 1, 2]   # contemplative, sentimental
-    aeolian = [2, 1, 2, 2, 1, 2, 2]      # sad, emotional  MINOR SCALE
-    locrian = [1, 2, 2, 1, 2, 2, 2]      # inquientante
-    bluesScale = [3, 2, 1, 1, 3, 2]      # emotional, regrets, soulful
-    chromatic = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # abstract, free, anxiety
-    wholeTone = [2, 2, 2, 2, 2, 2]       # dreamy, cosmic
-    phrigianDominant = [1, 3, 1, 2, 1, 2 ,2]  # serious, severe
-    pentatonicScale = [2, 2, 3, 2, 3]     # Joy
-    """
+
+
     # randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
 
     mood = makeScale()
@@ -280,6 +278,9 @@ def main():
     numBars = int(input())
     # numBars = 4
 
+    # --------> Crear aqui la secuencia de acordes <-------
+    chords_seq = generateChords(scale, numBars, mood)
+
     print("Enter mutation rate amount (0-1): ")
     mutationRate = float(input())
     # mutationRate = 0.5
@@ -293,7 +294,7 @@ def main():
 
     # creamos los archivos midi
     for i in range(numInd):
-        utils.toMidi(population[i], generation_number, i + 1, mood.bpm)
+        utils.toMidi(population[i], generation_number, i + 1, chords_seq, mood.bpm, mood.tonic_midi)
 
 
     ### === GENETIC ITERATIONS === ###
@@ -328,7 +329,7 @@ def main():
 
         # creamos los archivos midi
         for i in range(numInd):
-            utils.toMidi(population[i], generation_number, i + 1, mood.bpm)
+            utils.toMidi(population[i], generation_number, i + 1, chords_seq, mood.bpm, mood.tonic_midi)
 
         print("Continue? (1/0)")
         run = int(input())
