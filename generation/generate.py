@@ -168,9 +168,10 @@ def generateChords(scale: list, num_bars: int, mood: Mood):
     return chords
 
 
-def makeScale():
+def makeScale(numBars: int):
 
     scale = []
+    falling = None
 
     # Tonics in a dictionary first
     dictyNotes = {
@@ -191,55 +192,91 @@ def makeScale():
     ##Las escalas NO repiren su ultima nota
     ##Todas DEBEN sumar 12
     #                       2° 3° 4° 5° 6° 7°
-    majorScale = ("Major", [2, 2, 1, 2, 2, 2, 1])                      # Sweet, Love    "Ionic Scale"
+    majorScale = ("Major", [2, 2, 1, 2, 2, 2, 1])
     minorScale = ("Minor", [2, 1, 2, 2, 1, 2, 2])
-    #dorian = ("Dorian", [2, 1, 2, 2, 2, 1, 2])                         # melancolic, deep
-    #phrygian = ("Phrygian", [1, 2, 2, 2, 1, 2, 2])                     # depressed, mistery
-    #lydian = ("Lydian", [2, 2, 2, 1, 2, 2, 1])                         # floaty, otherworld, space
-    #mixolydian = ("Mixolydian", [2, 2, 1, 2, 2, 1, 2])                 # contemplative, sentimental
-    #aeolian = ("Aeolian", [2, 1, 2, 2, 1, 2, 2])                       # sad, emotional  MINOR SCALE
-    #locrian = ("Locrian", [1, 2, 2, 1, 2, 2, 2])                       # inquientante
-    #bluesScale = ("Blues", [3, 2, 1, 1, 3, 2])                         # emotional, regrets, soulful
-    #chromatic = ("Chromatic", [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])    # abstract, free, anxiety
-    #wholeTone = ("Whole Tone", [2, 2, 2, 2, 2, 2])                     # dreamy, cosmic
-    #phrigianDominant = ("Phrygian Dominant", [1, 3, 1, 2, 1, 2 ,2])    # serious, severe
-    #pentatonicScale = ("Pentatonic", [2, 2, 3, 2, 3])                  # Joy 
 
     print("Please, enter the Tonic of your scale\n C C# D D# E F F# G G# A A# B")
     tonic = input()
     mood = Mood(tonic, dictyNotes[tonic])
     
     # Identificamos que escalas dan un mood en especifico
-    print("Please, give us the number of your mood\n" + "1. Sad/Sentimental/Depressive\n2. Contemplative/Dreamy/Cosmic/Deep\n3. Emotional/Nostalgic\n4. Love\n5. Abstract/Free")
+    print("Please, give us the number of your mood\n" + "1. Sad/Sentimental/Depressive\n2. Contemplative/Dreamy/Cosmic/Deep\n3. Emotional/Nostalgic\n4. Abstract/Free")
     mood_t = int(input())
 
     if mood_t == 1:
         mood.set_mood("Sad")
         mood.set_bpm(random.randint(65, 75))
+        # Escoger escala mayor o menor
+        rand_ = random.randint(1, 10)
+        if(rand_ > 6):
+            mood.append_scale(minorScale)
+            print("Minor Scale selected")
+        else:
+            mood.append_scale(majorScale)
+            print("Major Scale selected")
+        
+        # Progresion de acordes descendente?  YES
+        falling = True
 
-    
+
     if mood_t == 2:
         mood.set_mood("Dreamy/Contemplative")
-        mood.set_bpm(random.randint(85, 95))
+        mood.set_bpm(random.randint(85, 90))
+        
+        # Escoger escala mayor o menor
+        rand_ = random.randint(1, 10)
+        if(rand_ > 5):
+            mood.append_scale(minorScale)
+            print("Minor Scale selected")
+        else:
+            mood.append_scale(majorScale)
+            print("Major Scale selected")
+        
+        # Progresion de acordes descendente?  50/50
+        rand_ = random.randint(1, 10)
+        if(rand_ > 0.5):
+            falling = True
+        else:
+            falling = False
     
     if mood_t == 3:
         mood.set_mood("Nostalgic")
         mood.set_bpm(random.randint(70, 85))
-    
+        # Escoger escala mayor o menor
+        rand_ = random.randint(1, 10)
+        if(rand_ > 6):
+            mood.append_scale(minorScale)
+            print("Minor Scale selected")
+        else:
+            mood.append_scale(majorScale)
+            print("Major Scale selected")
+
+        # Progresion de acordes descendente?  YES
+        falling = True
+
+
     if mood_t == 4:
-        mood.set_mood("Love")
-        mood.set_bpm(random.randint(90, 100))
-    
-    if mood_t == 5:
         mood.set_mood("Abstract/Free")
         mood.set_bpm(random.randint(66, 76))
-    
-    # De momento solo escala mayor
-    mood.append_scale(majorScale)
+        # Escoger escala mayor o menor
+        rand_ = random.randint(1, 10)
+        if(rand_ > 7):
+            mood.append_scale(minorScale)
+            print("Minor Scale selected")
+        else:
+            mood.append_scale(majorScale)
+            print("Major Scale selected")
+        
+        # Progresion de acordes descendente?  50/50
+        rand_ = random.randint(1, 10)
+        if(rand_ > 0.5):
+            falling = True
+        else:
+            falling = False
 
-    mood.select_scale()
+    #  END MOOD Y ESCALAS
 
-    mood.make_chords()
+    mood.make_chords(numBars, falling)
 
     return mood
 
@@ -251,12 +288,7 @@ def main():
 
     # randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
 
-    mood = makeScale()
 
-    scale = mood.scale_
-
-    # quick fix for adding silence to scale
-    scale.append(0)
 
     # scale = [48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 0] # 0 means silence
 
@@ -279,11 +311,18 @@ def main():
     # numBars = 4
 
     # --------> Crear aqui la secuencia de acordes <-------
-    chords_seq = generateChords(scale, numBars, mood)
+    #chords_seq = generateChords(scale, numBars, mood)
 
     print("Enter mutation rate amount (0-1): ")
     mutationRate = float(input())
     # mutationRate = 0.5
+
+    mood = makeScale(numBars)
+
+    scale = mood.scale_
+
+    # quick fix for adding silence to scale
+    scale.append(0)
 
     ### === INITIAL POPULATION === ###
 
@@ -294,7 +333,7 @@ def main():
 
     # creamos los archivos midi
     for i in range(numInd):
-        utils.toMidi(population[i], generation_number, i + 1, chords_seq, mood.bpm, mood.tonic_midi)
+        utils.toMidi(population[i], generation_number, i + 1, numBars, mood.seq_chords, mood.bpm, mood.tonic_midi)
 
 
     ### === GENETIC ITERATIONS === ###
@@ -329,7 +368,7 @@ def main():
 
         # creamos los archivos midi
         for i in range(numInd):
-            utils.toMidi(population[i], generation_number, i + 1, chords_seq, mood.bpm, mood.tonic_midi)
+            utils.toMidi(population[i], generation_number, i + 1, numBars, mood.seq_chords, mood.bpm, mood.tonic_midi)
 
         print("Continue? (1/0)")
         run = int(input())

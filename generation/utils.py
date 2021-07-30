@@ -49,7 +49,7 @@ def play_midi(midi_file):
         print('')
 
 
-def toMidi(individual: list, generation, indId, chords_seq: list, bpm: int, tonic: int, onlyChords = False):
+def toMidi(individual: list, generation, indId, numBars: int, chords_seq: list, bpm: int, tonic: int, onlyChords = False):
     ''' Generates a midi file '''
 
     track    = 0
@@ -59,6 +59,7 @@ def toMidi(individual: list, generation, indId, chords_seq: list, bpm: int, toni
     tempo    = bpm  # In BPM
     volume   = 100  # 0-127, as per the MIDI standard
 
+    # Track 0 para notas, track 1 para los acordes
     MyMIDI = MIDIFile(numTracks = 2)
 
     # One track, defaults to format 1 (tempo track automatically created)
@@ -66,26 +67,29 @@ def toMidi(individual: list, generation, indId, chords_seq: list, bpm: int, toni
 
     filename = f"{generation}-{indId}.mid"
 
-    for bar in individual:
-        for note in bar.notes:
-            if note.tone != 0:
-                MyMIDI.addNote(track, channel, note.tone, time, note.duration, volume)
-                time = time + note.duration # This implies notes will be played 1 by 1
+    # A midi las notas en el track 0
+    if not onlyChords:
+        for bar in individual:
+            for note in bar.notes:
+                if note.tone != 0:
+                    MyMIDI.addNote(track, channel, note.tone, time, note.duration, volume)
+                    time = time + note.duration # This implies notes will be played 1 by 1
 
-            else: # silence
-                time = time + note.duration
+                else: # silence
+                    time = time + note.duration
     
     
-    # Aqui se añaden los acordes
+    # A midi los acordes en el track 1
     time = 0
-    for chord in chords_seq:
-        seq_duration = None
-        for i in range(len(chord)):
-            if i == 0:
-                seq_duration = chord[i]
+    nChords = len(chords_seq)
+    for i in range(numBars):
+        chord_duration = None
+        for j in range(len(chords_seq[i % nChords])):
+            if j == 0:
+                chord_duration = chords_seq[i % nChords][0]
             else:
-                MyMIDI.addNote(1, channel, chord[i], time, seq_duration, 80)
-        time += seq_duration
+                MyMIDI.addNote(1, channel, chords_seq[i % nChords][j], time, chord_duration, 80)
+        time += chord_duration
         
 
     with open(PRODUCT_DIR + filename, "wb") as output_file:

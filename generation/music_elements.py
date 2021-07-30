@@ -108,11 +108,15 @@ class Bar():
 class Mood():
    #""" Un mood con escalas """
 
-    steps = None
-    scale_ =  []
-    tonic = "empty"
-    tonic_midi = 0
-    chords = []
+    steps = None     # Lista con la distancia entre las notas de la escala
+    scale_ =  []     # Notas de las 2 octavas de la escala
+    tonic = "empty"  # String con la tonica de la escala
+    tonic_midi = 0   # Midi de la tonica de la escala
+    chords = []      # Todos los acordes básicos
+    seq_chords = []  # Secuencia de acordes
+    seq_size = None  # Num acordes en la secuencia de acordes
+    numBars = None   # Cantidad de compases de los individuos
+
 
     # Constructor, se setea aqui la tonica y el valor midi de la tonica
     def __init__(self, tonic: str, tonic_midi: int):
@@ -133,9 +137,9 @@ class Mood():
     # Aqui se guardan las escalas para escoger una y crear las notas
     def append_scale(self, scale: tuple):
         self.steps = scale
+        self.make_scale()
 
-
-    def select_scale(self):
+    def make_scale(self):
         # Tomar la nota base de la escala (Tonica)
         actual_note = self.tonic_midi
         # Se guarda el largo de la escala
@@ -150,18 +154,31 @@ class Mood():
         #for x in self.scale_:
         #    print(x)
 
-
-    def make_chords(self):
+    def make_chords(self, numBars: int,  falling: bool):
+        """ Generates a sequence of chords """
+        
         actual_note = self.tonic_midi
         scale = [actual_note]
-        
+
+        sequence_size = None
+        self.numBars = numBars
+
+        """
+        # De 3 a 4 compases tendrá la secuencia de acordes
+        self.seq_size = random.randint(3, 4)
+        if self.seq_size > numBars:
+            self.seq_size = numBars
+        """
+
+
         # Crear la escala
         for i in range(6):
             actual_note = actual_note + self.steps[1][i % len(self.steps[1])]
             scale.append(actual_note)
         
         
-        # Crear acordes
+        # ----- Crear acordes
+        # Triadas
         actual_note = self.tonic_midi
         len_steps = len(self.steps[1])    # Largo de arreglo de steps de la escala
         for i in range(7):
@@ -180,4 +197,36 @@ class Mood():
         
         print("Chords")
         print(self.chords)
+
+        # Escoger los acordes de la secuencia
+        self.select_chords(falling)
+
+    def select_chords(self, falling: bool):
+
+        # Escoger acordes para la secuencia
+        # De momento es muy dummy
+        self.seq_chords.clear()      # Limpiar lista si ya tiene acordes
+
+        # Secuencia Descendiente
+        if falling:
+            deegres = [[5, 4, 3], [0, 5, 3, 4], [0, 0, 3, 5], [5, 3, 0, 4], [0, 6, 5, 6], [3, 0, 4, 5]]
+
+            rand_ = random.randint(0, 3)
+
+            for i in range(len(deegres[rand_])):
+                # Probabilidad de agregar septima
+                aux = random.randint(1, 10)   # 10% de agregar acorde septima
+                if aux < 2:
+                    print("Se agrego septima al acorde", i)
+                    self.seq_chords.append([4] + self.chords[deegres[rand_][i]] + [self.chords[deegres[rand_][i]][-1] + 4])
+                else:
+                    self.seq_chords.append([4] + self.chords[deegres[rand_][i]])
+
+
+        # Secuencia random
+        else:
+            for i in range(self.seq_size):
+                self.seq_chords.append([4] + random.choice(self.chords))   # [4] es la duración del acorde (1 compás)
+
+
 
