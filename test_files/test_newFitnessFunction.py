@@ -1,10 +1,8 @@
-# Standar import to generation package
-import numpy as np
-import sys
-import os
-sys.path.append(os.path.abspath('../generation'))
+"""
+Created on Friday July 30 15:23:38 2021
 
-import utils
+@author: vcoopman
+"""
 
 def fitnessFunction(population, generation_number):
     ''' rates the the individuals quality using sub-raters.
@@ -19,23 +17,6 @@ def fitnessFunction(population, generation_number):
         fitnessArray: np.array
 
     '''
-
-
-    amountInd = len(population)
-
-    for i in range(amountInd):
-        file_name = f"{generation_number}-{i+1}.mid"
-        utils.play_midi("product/" + file_name)
-
-        print("Rating for", i+1 ,"(1-10): ", end='')
-
-        # dev code
-        # random_value = random.randint(1, 10)
-        # fitnessArray[i] = random_value
-        # print(f"value assigned: {random_value}")
-
-        # fitnessArray[i] = (input())
-
 
         """
         Idea: Crear varios subrates (heuristicas) que su resultado en total, sea el valor dado al individuo.
@@ -58,10 +39,10 @@ def fitnessFunction(population, generation_number):
                 - Syncopation of Notes (Not Sure) [DONE]
                 - Pitch Range in Melody [DONE]
                 - Variety of Silences Density [DONE BUT DIFFERENT]
-                - Continuos Silence (Not Sure)
+                - Continuos Silence (Not Sure) [MISSING!]
                 - Unique Note Pitches [DONE]
                 - Equal Consecutive Notes [DONE]
-                - Unique Rhythm Values
+                - Unique Rhythm Values [DONE]
 
                 Estos subrater los deje afuera, ya que para nuestro caso creo q no aplican.
                 - Variety of Note Density
@@ -75,7 +56,4 @@ def fitnessFunction(population, generation_number):
             2. Se quiere una interfaz facil de usar (idealmente un one-liner) --> YES!
 
         """
-
-
-
-    return fitnessArray
+    pass
