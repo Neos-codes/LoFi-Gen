@@ -2,8 +2,6 @@
     Raters for fitness function
                                 '''
 
-from music_elements import Bar # local module
-
 STANDAR_RELEVANCE = 0.5
 TARGET_RATINGS = {
     'neighboring_pitch_range': 0.5,
@@ -335,36 +333,3 @@ def rate(ind, target_ratings):
         I += STANDAR_RELEVANCE
 
     return parcial_rate/I
-
-
-# SCALE = [0, 48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72]
-
-# NUM_BARS = 1
-# NUM_INDS = 1
-# population = []
-
-# # Create population
-# for _ in range(NUM_INDS):
-#     bars = []
-
-#     for _ in range(NUM_BARS):
-#         foo = Bar.from_scale(SCALE, 4, 4)
-#         bars.append(foo)
-
-#     population.append(bars)
-
-# for ind in population:
-#     for bar in ind:
-#         print(bar)
-
-# for ind in population:
-#     # print(neighboring_pitch_range(ind))
-#     # print(direction_of_melody(ind))
-#     # print(stability_of_melody(ind))
-#     # print(pitch_range(ind))
-#     # print(silences_density(ind))
-#     # print(syncopaty_in_melody(ind))
-#     # print(unique_note_pitches(ind))
-#     # print(equal_consecutive(ind))
-#     # print(unique_rhythm_values(ind))
-#     # print(rate(ind, TARGET_RATINGS))
