@@ -25,7 +25,7 @@ def fitnessFunction(population, generation_number):
     fitness_list = []
 
     for ind in population:
-        fitness_list.append(rate(ind, TARGET_RATINGS))
+        fitness_list.append(rate(ind, TARGET_RATINGS) * 10) # x 10 bc asi calza con lo que ya tenemos
 
     return np.array(fitness_list)
 
@@ -306,19 +306,19 @@ def main():
     #pauses = int(input())
 
     print("Enter amount of indiviuals per population: ")
-    numInd = int(input())
-    # numInd = 4
+    # numInd = int(input())
+    numInd = 4
 
     print("Enter the amount of bars per individual: ")
-    numBars = int(input())
-    # numBars = 4
+    # numBars = int(input())
+    numBars = 4
 
     # --------> Crear aqui la secuencia de acordes <-------
     #chords_seq = generateChords(scale, numBars, mood)
 
     print("Enter mutation rate amount (0-1): ")
-    mutationRate = float(input())
-    # mutationRate = 0.5
+    # mutationRate = float(input())
+    mutationRate = 0.5
 
     mood = makeScale(numBars)
 
@@ -356,6 +356,9 @@ def main():
 
         ##### rateamos la poblacion
         population_fitness = fitnessFunction(population, generation_number)
+
+        for i in range(numInd):
+            print(f"Rate for Individual #{i}: {population_fitness[i]}")
 
         ##### seleccionamos individuos de poblacion inicial
         selected_individuals = selectionFunction(numInd, population_fitness)
