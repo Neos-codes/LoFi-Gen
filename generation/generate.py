@@ -5,27 +5,30 @@ import copy
 import numpy as np
 import utils # local module
 from music_elements import Note, Bar, NOTE_DURATIONS, Mood # local module
+from raters import rate, TARGET_RATINGS # local module
 
-def fitnessFunction(fitnessArray: np.array, generation_number):
-    ''' rates the quality of the individuals '''
+def fitnessFunction(population, generation_number):
+    '''
+        Rates the the individuals quality using sub-raters.
 
-    amountInd = len(fitnessArray)
+        Parames
+        -----------
+        population : list
+        generation_number: int # not used
 
-    for i in range(amountInd):
-        file_name = f"{generation_number}-{i+1}.mid"
-        utils.play_midi("product/" + file_name)
+        Return
+        ------
+        fitnessArray: np.array
 
-        print("Rating for", i+1 ,"(1-10): ", end='')
+    '''
 
-        # dev code
-        # random_value = random.randint(1, 10)
-        # fitnessArray[i] = random_value
-        # print(f"value assigned: {random_value}")
+    fitness_list = []
 
-        fitnessArray[i] = (input())
+    for ind in population:
+        fitness_list.append(rate(ind, TARGET_RATINGS))
 
+    return np.array(fitness_list)
 
-    return fitnessArray
 
 def selectionFunction(amountInd: int, populationFitness: np.array):
     ''' selects individuals to generate the next population,
@@ -159,7 +162,7 @@ def generateChords(scale: list, num_bars: int, mood: Mood):
             print("Invalid number, you can't have a sequence with more bars than the individual, try again")
         else:
             break
-    
+
     # In C scale this sequence is A minor - G major - F major
     #chords = [[4, -3, 0, 4], [4, -5, -1, 2], [8, -7, -3, 0]]
 
@@ -198,7 +201,7 @@ def makeScale(numBars: int):
     print("Please, enter the Tonic of your scale\n C C# D D# E F F# G G# A A# B")
     tonic = input()
     mood = Mood(tonic, dictyNotes[tonic])
-    
+
     # Identificamos que escalas dan un mood en especifico
     print("Please, give us the number of your mood\n" + "1. Sad/Sentimental/Depressive\n2. Contemplative/Dreamy/Cosmic/Deep\n3. Emotional/Nostalgic\n4. Abstract/Free")
     mood_t = int(input())
@@ -214,7 +217,7 @@ def makeScale(numBars: int):
         else:
             mood.append_scale(majorScale)
             print("Major Scale selected")
-        
+
         # Progresion de acordes descendente?  YES
         falling = True
 
@@ -222,7 +225,7 @@ def makeScale(numBars: int):
     if mood_t == 2:
         mood.set_mood("Dreamy/Contemplative")
         mood.set_bpm(random.randint(85, 90))
-        
+
         # Escoger escala mayor o menor
         rand_ = random.randint(1, 10)
         if(rand_ > 5):
@@ -231,14 +234,14 @@ def makeScale(numBars: int):
         else:
             mood.append_scale(majorScale)
             print("Major Scale selected")
-        
+
         # Progresion de acordes descendente?  50/50
         rand_ = random.randint(1, 10)
         if(rand_ > 0.5):
             falling = True
         else:
             falling = False
-    
+
     if mood_t == 3:
         mood.set_mood("Nostalgic")
         mood.set_bpm(random.randint(70, 85))
@@ -352,8 +355,7 @@ def main():
             i += 1
 
         ##### rateamos la poblacion
-        individual_rating = np.zeros(numInd)
-        population_fitness = fitnessFunction(individual_rating, generation_number)
+        population_fitness = fitnessFunction(population, generation_number)
 
         ##### seleccionamos individuos de poblacion inicial
         selected_individuals = selectionFunction(numInd, population_fitness)
