@@ -307,18 +307,18 @@ def main():
 
     print("Enter amount of indiviuals per population: ")
     # numInd = int(input())
-    numInd = 4
+    numInd = 16
 
     print("Enter the amount of bars per individual: ")
     # numBars = int(input())
-    numBars = 4
+    numBars = 6
 
     # --------> Crear aqui la secuencia de acordes <-------
     #chords_seq = generateChords(scale, numBars, mood)
 
     print("Enter mutation rate amount (0-1): ")
     # mutationRate = float(input())
-    mutationRate = 0.5
+    mutationRate = 0.35
 
     mood = makeScale(numBars)
 
