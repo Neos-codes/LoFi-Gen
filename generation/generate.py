@@ -390,7 +390,7 @@ def lazy_generate(iterations):
 
     numInd = 30
     numBars = 12
-    mutationRate = 0.4
+    mutationRate = 0.3
     mood = makeScale(numBars)
     scale = mood.scale_
 
@@ -433,6 +433,11 @@ def lazy_generate(iterations):
 
                 best_rate = population_fitness[i]
 
+                best_ind = {
+                    'rate': best_rate,
+                    'name': f"{generation_number}-{i}"
+                }
+
 
         ##### seleccionamos individuos de poblacion inicial
         selected_individuals = selectionFunction(numInd, population_fitness)
@@ -452,8 +457,8 @@ def lazy_generate(iterations):
                 utils.toMidi(population[i], generation_number, i + 1, numBars, mood.seq_chords, mood.bpm, mood.tonic_midi)
 
             # dejamos de iterar
+            print(f"Highest rated individual: {best_ind['name']} with a rate of {best_ind['rate']}")
             break
-
 
 
 iterations = int(input("How many iterations: "))
