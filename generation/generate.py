@@ -388,9 +388,9 @@ def lazy_generate(iterations):
 
     ### === INPUT === ###
 
-    numInd = 16
-    numBars = 6
-    mutationRate = 0.35
+    numInd = 30
+    numBars = 12
+    mutationRate = 0.4
     mood = makeScale(numBars)
     scale = mood.scale_
 
