@@ -307,18 +307,18 @@ def main():
 
     print("Enter amount of indiviuals per population: ")
     # numInd = int(input())
-    numInd = 16
+    numInd = 30
 
     print("Enter the amount of bars per individual: ")
     # numBars = int(input())
-    numBars = 6
+    numBars = 12
 
     # --------> Crear aqui la secuencia de acordes <-------
     #chords_seq = generateChords(scale, numBars, mood)
 
     print("Enter mutation rate amount (0-1): ")
     # mutationRate = float(input())
-    mutationRate = 0.35
+    mutationRate = 0.5  #0.35 anteriormente
 
     mood = makeScale(numBars)
 
@@ -340,8 +340,11 @@ def main():
 
 
     ### === GENETIC ITERATIONS === ###
-    run = 1
-    while run:
+
+    print("How many generations?")
+    gens = int(input())
+    run = 0  # Anteriormente 1
+    while run < gens:
         # show inds
         i = 1
         for ind in population:
@@ -375,8 +378,9 @@ def main():
         for i in range(numInd):
             utils.toMidi(population[i], generation_number, i + 1, numBars, mood.seq_chords, mood.bpm, mood.tonic_midi)
 
-        print("Continue? (1/0)")
-        run = int(input())
+        #print("Continue? (1/0)")
+        #run = int(input())
+        run += 1
 
 main()
 

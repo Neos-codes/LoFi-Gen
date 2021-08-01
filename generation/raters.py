@@ -4,16 +4,16 @@
 
 STANDAR_RELEVANCE = 0.5
 TARGET_RATINGS = {
-    'neighboring_pitch_range': 0.5,
+    'neighboring_pitch_range': 0.3,
     'direction_of_melody': 0.5,
-    'stability_of_melody': 0.5,
+    'stability_of_melody': 0.6,
     'pitch_range': 0.5,
     'continuos_silence': 0.5,
-    'silences_density': 0.5,
+    'silences_density': 0.4,
     'syncopaty_in_melody': 0.5,
-    'unique_note_pitches': 0.5,
-    'equal_consecutive': 0.5,
-    'unique_rhythm_values': 0.5
+    'unique_note_pitches': 0.4,
+    'equal_consecutive': 0.7,
+    'unique_rhythm_values': 0.6
 }
 
 def neighboring_pitch_range(ind):
@@ -152,8 +152,46 @@ def continuos_silence(ind):
                     rate = 1 - silence_duration/longest_bar_duration
     '''
 
-    # NOT SURE IF LA ENTENDI BIEN
-    pass # 4 now
+    silence = None
+    silence_duration = 0
+    notes_duration = 0
+    longest_silence = 0
+
+    # Iniciar bandera con la primera nota del individuo
+    # Si la primera nota es un silencio, silence = true, si no, silence = false
+    if ind[0].notes[0].tone == 0:
+        silence = True
+    else:
+        silence = False
+
+
+    for bar in ind:
+        for note in bar.notes:
+
+            # Si estamos contando los "no silencio" y la nota actual es un silencio, comenzamos a contar silencios            
+            if not silence and note.tone == 0:
+                silence = True
+            
+            # Si estamos contando los "silencios" y la nota actual no es un silencio,
+            # Obtenemos la relación de duracion silencios vs duracion total de la frase hasta este punto
+            # No es una heuristica muy precisa, pero no hay formas de distinguir una frase al ser muy subjetivas
+            elif silence and note.tone != 0:
+                silence = False
+                if silence_duration / (silence_duration + notes_duration) > longest_silence:
+                    longest_silence = silence_duration / (silence_duration + notes_duration)
+                    silence_duration = 0
+                    notes_duration = 0
+
+
+            if not silence:
+                notes_duration += note.duration
+            # Si es silencio, añadir duracion al acumulador de notas que SI son silencio
+            else:
+                silence_duration += note.duration
+    
+    #print("Relacion longest silence:", longest_silence, 1 - longest_silence)
+
+    return 1 - longest_silence
 
 
 def silences_density(ind):
@@ -319,7 +357,8 @@ def rate(ind, target_ratings):
         syncopaty_in_melody,
         unique_note_pitches,
         equal_consecutive,
-        unique_rhythm_values
+        unique_rhythm_values,
+        continuos_silence
     ]
 
     parcial_rate = 0

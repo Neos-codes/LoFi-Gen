@@ -214,13 +214,7 @@ class Mood():
             rand_ = random.randint(0, 3)
 
             for i in range(len(deegres[rand_])):
-                # Probabilidad de agregar septima
-                aux = random.randint(1, 10)   # 10% de agregar acorde septima
-                if aux < 2:
-                    print("Se agrego septima al acorde", i)
-                    self.seq_chords.append([4] + self.chords[deegres[rand_][i]] + [self.chords[deegres[rand_][i]][-1] + 4])
-                else:
-                    self.seq_chords.append([4] + self.chords[deegres[rand_][i]])
+                self.seq_chords.append([4] + self.chords[deegres[rand_][i]])
 
 
         # Secuencia random
