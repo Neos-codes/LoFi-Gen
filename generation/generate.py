@@ -289,13 +289,6 @@ def main():
     #https://github.com/kiecodes/generate-music/blob/main/algorithms/genetic.py
 
 
-    # randDuration = [0.5, 1, 1, 1, 1, 1, 1, 2, 2]
-
-
-
-    # scale = [48, 50, 52, 55, 57, 60, 62, 64, 67, 69, 72, 0] # 0 means silence
-
-
     ### === INPUT === ###
 
     #Ahora calculamos las notas que puede tener el codigo
@@ -382,8 +375,92 @@ def main():
         #run = int(input())
         run += 1
 
-main()
 
+def lazy_generate(iterations):
+    '''
+        Does X amount of iterations.
+        It only saves the last iteration and the best ones founded during the process.
+
+        Params
+        ------
+        iterations: int
+    '''
+
+    ### === INPUT === ###
+
+    numInd = 16
+    numBars = 6
+    mutationRate = 0.35
+    mood = makeScale(numBars)
+    scale = mood.scale_
+
+    # quick fix for adding silence to scale
+    scale.append(0)
+
+
+    ### === INITIAL POPULATION === ###
+
+    best_rate = 0
+    generation_number = 0
+
+    # esto sera una lista de listas de Bars
+    population = generateInitialPop(scale, numBars, numInd)
+
+    ### === GENETIC ITERATIONS === ###
+    while True:
+        # show inds
+        i = 1
+        for ind in population:
+            ind_str = ''
+
+            for bar in ind:
+                ind_str = f"{ind_str} {bar}"
+
+            print(f"Individual #{i}: {ind_str}")
+            print('')
+            i += 1
+
+        ##### rateamos la poblacion
+        population_fitness = fitnessFunction(population, generation_number)
+
+        for i in range(numInd):
+            print(f"Rate for Individual #{i}: {population_fitness[i]}")
+
+            # compare with the recorded best
+            if population_fitness[i] > best_rate:
+                # save it
+                utils.toMidi(population[i], generation_number, i + 1, numBars, mood.seq_chords, mood.bpm, mood.tonic_midi)
+
+                best_rate = population_fitness[i]
+
+
+        ##### seleccionamos individuos de poblacion inicial
+        selected_individuals = selectionFunction(numInd, population_fitness)
+
+        #### Realizamos el crossover
+        population = crossoverFunction(selected_individuals, population)
+
+        #### Realizamos la mutacion
+        population = mutationFunction(population, mutationRate, scale)
+
+        generation_number = generation_number + 1
+
+
+        if iterations == generation_number:
+            # creamos los archivos midi
+            for i in range(numInd):
+                utils.toMidi(population[i], generation_number, i + 1, numBars, mood.seq_chords, mood.bpm, mood.tonic_midi)
+
+            # dejamos de iterar
+            break
+
+
+
+iterations = int(input("How many iterations: "))
+lazy_generate(iterations)
+
+
+########## DEPRECATED CODE BELOW
 
 # """
 # if (pauses):
@@ -391,8 +468,6 @@ main()
 #                 print ("pause for ", time)
 #                 time = time + duration
 #                 continue"""
-
-########## DEPRECATED CODE BELOW
 
 # def generateNotes(scale: list, startNote: int):
 #     #*scale = lista de la escala
