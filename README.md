@@ -8,6 +8,8 @@ An automatic Lo-Fi music generator.
 
 > pipenv install -r requirements.txt
 
+(If you get problems with tkinter, run: sudo apt-get install python3-tk) ⚠️
+
 ## (2) How to run it
 
 > cd generation
