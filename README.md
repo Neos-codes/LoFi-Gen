@@ -13,5 +13,8 @@ An automatic Lo-Fi music generator.
 ## (2) How to run it
 
 > cd generation
-
+### Linux
 > pipenv run python3 gui.py
+
+### Windows
+pipenv run python gui.py
