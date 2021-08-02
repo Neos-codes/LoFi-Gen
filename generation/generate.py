@@ -7,6 +7,26 @@ import utils # local module
 from music_elements import Note, Bar, NOTE_DURATIONS, Mood # local module
 from raters import rate, TARGET_RATINGS # local module
 
+numInd = 30
+numBars = 12
+mutationRate = 0.4
+
+# Tonics in a dictionary first
+dictyNotes = {
+    "C": 48,
+    "C#": 49,
+    "D": 50,
+    "D#": 51,
+    "E": 52,
+    "F": 53,
+    "F#": 54,
+    "G": 55,
+    "G#": 56,
+    "A": 57,
+    "A#": 58,
+    "B": 59
+}
+
 def fitnessFunction(population, generation_number):
     '''
         Rates the the individuals quality using sub-raters.
@@ -171,26 +191,11 @@ def generateChords(scale: list, num_bars: int, mood: Mood):
     return chords
 
 
-def makeScale(numBars: int):
+def makeScale(numBars: int, tonica_str: str, tonica_midi: int, mood_t: int):
 
     scale = []
     falling = None
 
-    # Tonics in a dictionary first
-    dictyNotes = {
-        "C": 48,
-        "C#": 49,
-        "D": 50,
-        "D#": 51,
-        "E": 52,
-        "F": 53,
-        "F#": 54,
-        "G": 55,
-        "G#": 56,
-        "A": 57,
-        "A#": 58,
-        "B": 59
-    }
     #Scales and moods
     ##Las escalas NO repiren su ultima nota
     ##Todas DEBEN sumar 12
@@ -198,13 +203,13 @@ def makeScale(numBars: int):
     majorScale = ("Major", [2, 2, 1, 2, 2, 2, 1])
     minorScale = ("Minor", [2, 1, 2, 2, 1, 2, 2])
 
-    print("Please, enter the Tonic of your scale\n C C# D D# E F F# G G# A A# B")
-    tonic = input()
-    mood = Mood(tonic, dictyNotes[tonic])
+    #print("Please, enter the Tonic of your scale\n C C# D D# E F F# G G# A A# B")
+    #tonic = input()
+    mood = Mood(tonica_str, tonica_midi)
 
     # Identificamos que escalas dan un mood en especifico
-    print("Please, give us the number of your mood\n" + "1. Sad/Sentimental/Depressive\n2. Contemplative/Dreamy/Cosmic/Deep\n3. Emotional/Nostalgic\n4. Abstract/Free")
-    mood_t = int(input())
+    #print("Please, give us the number of your mood\n" + "1. Sad/Sentimental/Depressive\n2. Contemplative/Dreamy/Cosmic/Deep\n3. Emotional/Nostalgic\n4. Abstract/Free")
+    #mood_t = int(input())
 
     if mood_t == 1:
         mood.set_mood("Sad")
@@ -284,7 +289,7 @@ def makeScale(numBars: int):
     return mood
 
 
-def main():
+def main(tonica_str: str, tonica_midi: int):
     #https://github.com/kiecodes/genetic-algorithms/blob/master/algorithms/genetic.py
     #https://github.com/kiecodes/generate-music/blob/main/algorithms/genetic.py
 
@@ -298,22 +303,22 @@ def main():
     #print("Pauses? (1/0)")
     #pauses = int(input())
 
-    print("Enter amount of indiviuals per population: ")
+    #print("Enter amount of indiviuals per population: ")
     # numInd = int(input())
-    numInd = 30
+    #numInd = 30
 
-    print("Enter the amount of bars per individual: ")
+    #print("Enter the amount of bars per individual: ")
     # numBars = int(input())
-    numBars = 12
+    #numBars = 12
 
     # --------> Crear aqui la secuencia de acordes <-------
     #chords_seq = generateChords(scale, numBars, mood)
 
-    print("Enter mutation rate amount (0-1): ")
+    #print("Enter mutation rate amount (0-1): ")
     # mutationRate = float(input())
-    mutationRate = 0.5  #0.35 anteriormente
+    #mutationRate = 0.5  #0.35 anteriormente
 
-    mood = makeScale(numBars)
+    mood = makeScale(numBars, tonica_str, tonica_midi)
 
     scale = mood.scale_
 
@@ -376,7 +381,7 @@ def main():
         run += 1
 
 
-def lazy_generate(iterations):
+def lazy_generate(iterations: int, tonica_str: str, tonica_midi: int, mood_number: int):
     '''
         Does X amount of iterations.
         It only saves the last iteration and the best ones founded during the process.
@@ -388,10 +393,10 @@ def lazy_generate(iterations):
 
     ### === INPUT === ###
 
-    numInd = 30
-    numBars = 12
-    mutationRate = 0.3
-    mood = makeScale(numBars)
+    #numInd = 30
+    #numBars = 12
+    #mutationRate = 0.4
+    mood = makeScale(numBars, tonica_str, tonica_midi, mood_number)
     scale = mood.scale_
 
     # quick fix for adding silence to scale
@@ -435,7 +440,7 @@ def lazy_generate(iterations):
 
                 best_ind = {
                     'rate': best_rate,
-                    'name': f"{generation_number}-{i}"
+                    'name': f"{generation_number}-{i + 1}"
                 }
 
 
@@ -460,95 +465,7 @@ def lazy_generate(iterations):
             print(f"Highest rated individual: {best_ind['name']} with a rate of {best_ind['rate']}")
             break
 
-
-iterations = int(input("How many iterations: "))
-lazy_generate(iterations)
-
-
-########## DEPRECATED CODE BELOW
-
-# """
-# if (pauses):
-#             if (90 < random.randint(1,100)):
-#                 print ("pause for ", time)
-#                 time = time + duration
-#                 continue"""
-
-# def generateNotes(scale: list, startNote: int):
-#     #*scale = lista de la escala
-#     #startNote = nota startNote de donde empezamos
-#     #DESC: Genera las notas posibles que podra usar
-#     #el algoritmo
-#     print("generating notes...")
-#     offset = 8 - len(scale)
-#     print("offset:", offset)
-
-#     startNote = startNote - 12
-#     currentNote = startNote
-#     listNotes = [currentNote]
-
-#     scaleLength = len(scale*2)
-#     for i in range(scaleLength):
-#         currentNote = currentNote + scale[i%len(scale)]
-#         listNotes.append(currentNote)
-#     print(scaleLength, "notes were generated")
-
-#     if (scaleLength < 16):
-#         print("need", 16 - scaleLength,"more")
-#     else:
-#         print("need", 16 - scaleLength,"less")
-
-
-
-#     return listNotes
-# #generateNotesEnd
-
-
-# def geneticIteration(population: list, mutationRate: float, scale: list, generation_number: int):
-#     ''' generates a new population '''
-
-#     numInd = len(population)
-#     # numDNA = int(np.shape(population)[1])
-
-#     i = 1
-#     for ind in population:
-#         print(f"Individual #{i}: {ind}")
-#         print('')
-#         i = i + 1
-
-#     #####rateamos la poblacion
-#     individualRating = np.zeros(numInd)
-#     populationFitness = fitnessFunction(individualRating, generation_number)
-
-#     #####seleccionamos individuos de poblacion inicial
-#     selectedIndividuals = selectionFunction(population, populationFitness)
-
-
-#     """print("Selected parents")
-#     for i in range(len(selectedIndividuals)):
-#         print(selectedIndividuals[i], " ", end='')
-#     print("\n")
-#     """
-
-#     #####Realizamos el crossover
-#     population = crossoverFunction(selectedIndividuals, population)
-
-#     """print("Printing possible notes")
-#     for i in range(len(generatedNotes)):
-#         print(generatedNotes[i])"""
-
-#     """for i in range(numIndividuals):
-#         print("Individual", i)
-#         for j in range(4*4):
-#             print(population[i][j], " ", end='')
-#         print("\n")"""
-
-#     mutationFunction(population, mutationRate, scale)
-
-#     print("Mutated population")
-#     for i in range(numInd):
-#         print("Individual", i)
-#         for j in range(4*4):
-#             print(population[i][j], " ", end='')
-#         print("\n ")
-    # return population
+if __name__ == "__main__":
+    #main()
+    iterations = int(input("How many iterations: "))
+    lazy_generate(iterations)
