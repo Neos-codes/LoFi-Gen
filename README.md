@@ -17,4 +17,4 @@ An automatic Lo-Fi music generator.
 > pipenv run python3 gui.py
 
 ### Windows
-pipenv run python gui.py
+> pipenv run python gui.py
