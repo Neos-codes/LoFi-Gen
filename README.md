@@ -1,5 +1,7 @@
 # LoFi-Gen
 
+An automatic Lo-Fi music generator.
+
 ## (1) How to install project
 
 > pip install pipenv
@@ -10,4 +12,4 @@
 
 > cd generation
 
-> pipenv run python3 generate.py
+> pipenv run python3 gui.py
