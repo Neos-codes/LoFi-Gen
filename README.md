@@ -2,6 +2,8 @@
 
 An automatic Lo-Fi music generator.
 
+> By Fabián Cid (@Neos-codes), Vicente Coopman (@vcoopman) & Rodolfo Fariña (@rfarina97)
+
 ## (1) How to install project
 
 > pip install pipenv
